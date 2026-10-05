@@ -1,4 +1,4 @@
-# CHF 领口对冲工作台 V3
+# CHF 领口对冲工作台 V3.1
 
 私有网站：[打开工作台](https://chf-collar-lab.gpt4both.chatgpt.site)。使用获授权的 ChatGPT 账号登录。
 
@@ -31,13 +31,23 @@ Codex 后续开发：打开恢复出的目录，先阅读 AGENTS.md 和 README.m
 
 | 文件 | 内容 |
 | --- | --- |
-| chf-collar-workbench-source.zip | 所有 152 个受版本控制的源文件，含应用、测试和部署配置 |
+| chf-collar-workbench-source.zip | 所有 156 个受版本控制的源文件，含应用、测试和部署配置 |
 | chf-collar-workbench-website.tar.gz | 已发布版本的 dist/client 和 dist/server；完整应用包含服务端，不能只双击 HTML 运行 |
 | restore-source.sh | 安全恢复为独立项目目录，不覆盖已有目录 |
 | SHA256SUMS | 两个交付包的 SHA-256 校验值 |
 
-源码版本：`d684231c645d538fc8408d94b9df8e964b189969`。Sites 部署：`appgdep_6ac390e50ca881919de9f620f2ffada7`，状态 succeeded，2026-10-05。
+源码版本：`967c4dfea06c23cc5264e485e5189b9497c5b731`。Sites 部署：`appgdep_6ac3a08a72408191bb1eb4a7d900027a`，状态 succeeded，2026-10-05。
 
-验证：33 组金融、策略、API、融资与 Excel 测试通过；TypeScript 和生产构建通过；本地浏览器功能和 390px 手机布局已检查。线上地址能够返回私有登录页，应用需要 ChatGPT 身份验证。
+验证：48 组金融、策略、API、融资与 Excel 测试通过；TypeScript 和生产构建通过；本地浏览器功能和 390px 手机布局已检查。网站已成功发布，应用需要 ChatGPT 身份验证。
 
 网站继续托管于 Sites。GitHub 是源码和构建备份，不会自动发布 Sites，也没有改为公开访问。不要提交令牌、`.env` 或浏览器中的个人方案。
+
+## V3.1 更新
+
+- 核实本金汇兑项方向，增加对冲后本息汇兑小计和足量 Call 逐情景抵销表。
+- CME 到期使用期货 fixing；修正期前估值的持有成本，参考价逐腿反推 IV。
+- 全域边界包含解析无穷远尾部；跨期限 Black 估值采用凸性包络，并显示数值误差。
+- 增加基差／路径假设、名义与模型尾部覆盖率、显式补足尾部操作。
+- 公式管理展示完整逻辑、官方来源与当前数值对照；Excel 同步保存假设和边界。
+
+[打开公式管理](https://chf-collar-lab.gpt4both.chatgpt.site/formulas#hedge-logic)。
