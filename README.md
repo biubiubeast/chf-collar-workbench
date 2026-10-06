@@ -1,6 +1,6 @@
-# CHF 领口对冲工作台 V3.3
+# CHF 领口对冲工作台 V3.4
 
-私有网站：[打开工作台](https://chf-collar-lab.gpt4both.chatgpt.site/) · [代表案例](https://chf-collar-lab.gpt4both.chatgpt.site/#expiry-cases) · [公式管理](https://chf-collar-lab.gpt4both.chatgpt.site/formulas#hedge-logic)
+私有网站：[打开工作台](https://chf-collar-lab.gpt4both.chatgpt.site/) · [客户展示](https://chf-collar-lab.gpt4both.chatgpt.site/client) · [代表案例](https://chf-collar-lab.gpt4both.chatgpt.site/#expiry-cases) · [公式管理](https://chf-collar-lab.gpt4both.chatgpt.site/formulas#hedge-logic)
 
 这是完整项目交付备份。GitHub 连接尚未授权访问这个新私有仓库，因此通过浏览器上传完整源码 ZIP 和已部署网站构建包，源码没有删减。网站仍由 Sites 私有托管。
 
@@ -16,6 +16,16 @@ pnpm dev
 ```
 
 需要 Node.js 22.13+（建议 Node 24）和 pnpm 11.25.0。打开终端输出的网址。恢复脚本先核对 SHA-256，然后建立独立的 chf-collar-workbench/ 目录；已有同名目录时停止，避免覆盖。Codex 继续开发时打开恢复出的目录，先读 AGENTS.md、README.md，再运行 pnpm test、pnpm typecheck、pnpm build。提交展开的源码后即可作为普通 GitHub 项目开发。
+
+## V3.4 客户展示与权利金预算
+
+- 新页面 /client：输入或拖动 x USD，仅约束期初期权权利金；保证金、手续费与未来滚仓资金另列。
+- 比较银行远期、Zero Collar、ATM 买 Call＋卖 Put、单独买 ATM Call，并支持最多四组自定义期权组合。
+- 默认买入权利金预算，卖出收入抵减净成本；可切换净权利金预算。零／净收款组合和远期按相同 x 下单买 ATM Call 的 CHF 数量参照，防止虚构无限保护。
+- 买卖组合两侧总 CHF 数量保持 1:1，各侧组内均分；CME 采用整组整数手数，保护上限不超过所设本息数量。
+- 至少三个可编辑到期案例，图表互动、成本明细、整体净收益、相对不对冲的改善与全域界限；参数在客户页单独保存。
+- 保证金比例是银行／券商核定前的模型假设。CME 保留滚仓、基差条件、包络误差和收敛状态。
+- [公式管理说明](https://chf-collar-lab.gpt4both.chatgpt.site/formulas#client-budget) 解释预算反求、1:1、四策略赔付、资金账与官方依据。
 
 ## V3.3 CME 滚仓与同步偿付
 
@@ -44,13 +54,13 @@ pnpm dev
 
 | 文件 | 内容 |
 | --- | --- |
-| chf-collar-workbench-source.zip | 164 个受版本控制的源文件，含完整应用、测试、锁定依赖、开发说明和部署配置 |
+| chf-collar-workbench-source.zip | 169 个受版本控制的源文件，含完整应用、测试、锁定依赖、开发说明和部署配置 |
 | chf-collar-workbench-website.tar.gz | 与已发布版本一致的客户端和服务端构建，不是双击 HTML 的静态网页 |
 | restore-source.sh | 安全恢复项目目录 |
 | SHA256SUMS | 两个交付包校验值 |
 
-源码版本：a8d203b0ecec534d17f1538c8a4a7909f8d64dac。Sites 部署：appgdep_6ac4ba9c8728819198d13fd08f5df23a，2026-10-06 状态 succeeded。
+源码版本：9a6e3c9513d2713f92fdda7339f3ba1a3dc51bb8。Sites 部署：appgdep_6ac4ea7b45b8819199d818f5e1a3a9c8，2026-10-06 状态 succeeded。
 
-63 组测试通过，TypeScript 与生产构建通过。浏览器验证了增删改、刷新持久化、Excel 生成与无效输入提示，1280px / 390px 布局无页面横向溢出。XLSX 写入后重新读取，验证了独立 Sheet、公式和每例资金勾稽。
+71 组测试通过，TypeScript 与生产构建通过。客户页浏览器验证了预算滑块、净／总权利金、OTC/CME、案例增删、三腿买卖 1:1、刷新持久化和 390px 手机布局。现有 Excel 回归包含独立 Sheet、公式和每例资金勾稽。
 
 不要提交令牌、.env 或浏览器个人方案。GitHub 备份不会自动发布 Sites。
