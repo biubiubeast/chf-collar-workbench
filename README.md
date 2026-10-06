@@ -1,4 +1,4 @@
-# CHF 领口对冲工作台 V3.4
+# CHF 领口对冲工作台 V3.5
 
 私有网站：[打开工作台](https://chf-collar-lab.gpt4both.chatgpt.site/) · [客户展示](https://chf-collar-lab.gpt4both.chatgpt.site/client) · [代表案例](https://chf-collar-lab.gpt4both.chatgpt.site/#expiry-cases) · [公式管理](https://chf-collar-lab.gpt4both.chatgpt.site/formulas#hedge-logic)
 
@@ -17,11 +17,23 @@ pnpm dev
 
 需要 Node.js 22.13+（建议 Node 24）和 pnpm 11.25.0。打开终端输出的网址。恢复脚本先核对 SHA-256，然后建立独立的 chf-collar-workbench/ 目录；已有同名目录时停止，避免覆盖。Codex 继续开发时打开恢复出的目录，先读 AGENTS.md、README.md，再运行 pnpm test、pnpm typecheck、pnpm build。提交展开的源码后即可作为普通 GitHub 项目开发。
 
+## V3.5 全额远期、客户基础参数与一年期限
+
+- 客户展示页直接调整本金、杠杆或固定 CHF 借款、即期、存贷利率、起息日与目标日；新方案默认香港当日到一年后，保存的日期保留。一键设一年期限。
+- 客户银行远期始终覆盖全部到期 CHF 本息，不使用期权权利金预算 x；x=0 仍全额，期权数量归零。费用、保证金及其资金机会成本另计。
+- 工作台加入银行远期，可单独启用或混合期权；“仅用全额远期”清除期权及原期权保证金。自动远期数量跟随本息，已有期权腿不自动调整。
+- 默认 Investing.com 1Y **参考快照**：2026-10-06T15:32:51Z 读取，即期 Bid/Ask .8311/.8313，点数 -369.39/-366.08；网页报价日期、时区未知，钟点不同，不是同步可成交报价。买 CHF 用 `1/(spotBid+pointsBid/10000)`，卖 CHF 用来源 Ask 倒数。
+- 公开自动读取遇 HTTP 403 会显示原因并保留快照；非一年日期明确用利率平价估算。支持手动银行最终约定汇率，该汇率不重复叠加额外价差。建模 S₀ 与来源即期不同会披露混合时点及期初模型市值差异，不表示可执行套利。
+- 仅全额、同价值日远期消除本息汇率斜率：`-N*S+N*(S-K)=-N*K`，全域上界与下界相等；收益仍包括融资、费用和资金占用。真实银行需确认交割价值日、截止时间、存款解付及追保流动性。
+- Excel 每个案例增加远期费用、价值、收益和交割日；按 `USD=-sign*H*K, CHF=sign*H` 实际交割，再处理 CHF 差额并还款，不重复记录经济赔付。
+- [远期公式说明](https://chf-collar-lab.gpt4both.chatgpt.site/formulas#forward-hedge) 完整展示来源、点数换算、利率平价、本息覆盖、上下界、期前估值及交割现金链。
+- 8 组新远期验证，总计 79 组通过；TypeScript 与生产构建通过。浏览器核对本金、杠杆、x=0、银行报价、三例固定收益、非一年回退、403提示、账表与 Excel 生成、390px布局。自动化核验真实 XLSX 六个 Sheet 的公式与现金勾稽。
+
 ## V3.4 客户展示与权利金预算
 
 - 新页面 /client：输入或拖动 x USD，仅约束期初期权权利金；保证金、手续费与未来滚仓资金另列。
 - 比较银行远期、Zero Collar、ATM 买 Call＋卖 Put、单独买 ATM Call，并支持最多四组自定义期权组合。
-- 默认买入权利金预算，卖出收入抵减净成本；可切换净权利金预算。零／净收款组合和远期按相同 x 下单买 ATM Call 的 CHF 数量参照，防止虚构无限保护。
+- 默认买入权利金预算，卖出收入抵减净成本；可切换净权利金预算。零／净收款期权组合按相同 x 下单买 ATM Call 的 CHF 数量参照；V3.5 的银行远期固定覆盖全部到期本息，与 x 无关，防止虚构无限保护。
 - 买卖组合两侧总 CHF 数量保持 1:1，各侧组内均分；CME 采用整组整数手数，保护上限不超过所设本息数量。
 - 至少三个可编辑到期案例，图表互动、成本明细、整体净收益、相对不对冲的改善与全域界限；参数在客户页单独保存。
 - 保证金比例是银行／券商核定前的模型假设。CME 保留滚仓、基差条件、包络误差和收敛状态。
@@ -54,13 +66,13 @@ pnpm dev
 
 | 文件 | 内容 |
 | --- | --- |
-| chf-collar-workbench-source.zip | 169 个受版本控制的源文件，含完整应用、测试、锁定依赖、开发说明和部署配置 |
+| chf-collar-workbench-source.zip | 175 个受版本控制的源文件，含完整应用、测试、锁定依赖、开发说明和部署配置 |
 | chf-collar-workbench-website.tar.gz | 与已发布版本一致的客户端和服务端构建，不是双击 HTML 的静态网页 |
 | restore-source.sh | 安全恢复项目目录 |
 | SHA256SUMS | 两个交付包校验值 |
 
-源码版本：9a6e3c9513d2713f92fdda7339f3ba1a3dc51bb8。Sites 部署：appgdep_6ac4ea7b45b8819199d818f5e1a3a9c8，2026-10-06 状态 succeeded。
+源码版本：065c4eb2ff9673af4b5fb4d87ecc94d16806e6dc。Sites 部署：appgdep_6ac51e96f40c81919aa78cb92531cb49，2026-10-07（香港时间）状态 succeeded。
 
-71 组测试通过，TypeScript 与生产构建通过。客户页浏览器验证了预算滑块、净／总权利金、OTC/CME、案例增删、三腿买卖 1:1、刷新持久化和 390px 手机布局。现有 Excel 回归包含独立 Sheet、公式和每例资金勾稽。
+79 组测试通过，TypeScript 与生产构建通过。客户页浏览器验证了预算滑块、净／总权利金、OTC/CME、案例增删、三腿买卖 1:1、刷新持久化和 390px 手机布局。现有 Excel 回归包含独立 Sheet、公式和每例资金勾稽。
 
 不要提交令牌、.env 或浏览器个人方案。GitHub 备份不会自动发布 Sites。
