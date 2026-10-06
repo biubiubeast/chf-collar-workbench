@@ -1,4 +1,4 @@
-# CHF 领口对冲工作台 V3.2
+# CHF 领口对冲工作台 V3.3
 
 私有网站：[打开工作台](https://chf-collar-lab.gpt4both.chatgpt.site/) · [代表案例](https://chf-collar-lab.gpt4both.chatgpt.site/#expiry-cases) · [公式管理](https://chf-collar-lab.gpt4both.chatgpt.site/formulas#hedge-logic)
 
@@ -16,6 +16,15 @@ pnpm dev
 ```
 
 需要 Node.js 22.13+（建议 Node 24）和 pnpm 11.25.0。打开终端输出的网址。恢复脚本先核对 SHA-256，然后建立独立的 chf-collar-workbench/ 目录；已有同名目录时停止，避免覆盖。Codex 继续开发时打开恢复出的目录，先读 AGENTS.md、README.md，再运行 pnpm test、pnpm typecheck、pnpm build。提交展开的源码后即可作为普通 GitHub 项目开发。
+
+## V3.3 CME 滚仓与同步偿付
+
+- 默认在旧 CME 腿到期前 7 个日历日滚仓，周末前移；可关闭或调整滚仓日、汇率、旧/新 IV、追加保证金与错时垫款天数。
+- 2026-10-06 → 2027-10-06 的计划：先持有 CHUU27（2027-09-03 到期），2027-08-27 滚入 CHUV27（2027-10-08 到期），标的 6SZ27 计划 2027-12-15 交割。
+- Black76 估算旧腿平仓及新腿权利金，计入两次手续费、价差/深度冲击、独立滚仓融资和保证金占用。目标日保留新腿两天时间价值并计退出成本预算。
+- 所有 Excel 案例 Sheet 列出滚仓计划及现金流；旧腿平仓后不会重复到期结算。页面、边界、逐腿收益、期前市值和资产负债核对使用同一引擎。
+- 上下界固定滚仓汇率、IV、基差、成本与资金假设，不代表任意未来路径保证。公式管理增加官方日期链、完整模型、执行窗口及银行/券商价值日错配说明。
+- 修复日期输入控件更新显示但模型未更新的问题。
 
 ## V3.2 案例与逐腿收益
 
@@ -35,13 +44,13 @@ pnpm dev
 
 | 文件 | 内容 |
 | --- | --- |
-| chf-collar-workbench-source.zip | 160 个受版本控制的源文件，含完整应用、测试、锁定依赖、开发说明和部署配置 |
+| chf-collar-workbench-source.zip | 164 个受版本控制的源文件，含完整应用、测试、锁定依赖、开发说明和部署配置 |
 | chf-collar-workbench-website.tar.gz | 与已发布版本一致的客户端和服务端构建，不是双击 HTML 的静态网页 |
 | restore-source.sh | 安全恢复项目目录 |
 | SHA256SUMS | 两个交付包校验值 |
 
-源码版本：958b9a9fb8330e3e33d1688b65671a91c2a048ad。Sites 部署：appgdep_6ac4a165517881918bc02afa8e82bd4f，2026-10-06 状态 succeeded。
+源码版本：a8d203b0ecec534d17f1538c8a4a7909f8d64dac。Sites 部署：appgdep_6ac4ba9c8728819198d13fd08f5df23a，2026-10-06 状态 succeeded。
 
-56 组测试通过，TypeScript 与生产构建通过。浏览器验证了增删改、刷新持久化、Excel 生成与无效输入提示，1280px / 390px 布局无页面横向溢出。XLSX 写入后重新读取，验证了独立 Sheet、公式和每例资金勾稽。
+63 组测试通过，TypeScript 与生产构建通过。浏览器验证了增删改、刷新持久化、Excel 生成与无效输入提示，1280px / 390px 布局无页面横向溢出。XLSX 写入后重新读取，验证了独立 Sheet、公式和每例资金勾稽。
 
 不要提交令牌、.env 或浏览器个人方案。GitHub 备份不会自动发布 Sites。
