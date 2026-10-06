@@ -11,7 +11,7 @@ Independent private CHF project. Do not edit the parent gold-options application
 - Excel is a browser-generated scenario snapshot with typed values and balance formulas. Keep dynamic import to avoid loading ExcelJS on initial page render.
 - Never invent live quotes, locked protection or bank terms. Preserve conditional expiry and basis warnings.
 - Financing changes do not silently resize existing legs; explicit sync is intentional.
-- Routes: /, /client, /formulas, /api-manager, /legacy, /api/spot, /api/market.
+- Routes: /, /client, /formulas, /api-manager, /settings, /legacy, /api/spot, /api/market.
 - Preserve the V2 DOCX manual. V3 behavior is documented in README.
 - Exclude node_modules, dist, .env, .sites-runtime, .wrangler and outputs. Never persist source-write or GitHub tokens.
 - Browser checks should cover financing changes, manual mode, persistence, download and responsive layout.
@@ -36,3 +36,7 @@ Independent private CHF project. Do not edit the parent gold-options application
 - Strategy forward margin is added once to base option margin. Explicit forwardInputs bypass configured auto forward. Client comparisons disable auto forward for option/bare alternatives. Show fees and margin separately. /api/forward must disclose blocked retrieval and preserve dated snapshot.
 
 - V3.6: client-budget owns shared executed premium costs and explicit quantity/strike optimizers. Preserve per-side buy:sell 1:1, whole CME bundles and repayment cap for quantity max. Manual client amounts are fixed and over-budget drafts must be labeled, never silently resized or shown as feasible. Lock freezes x and budget mode, not editing strikes or quantities; serialize the lock in the isolated client state. OTC Call strike max can be unbounded: explain, do not fabricate a finite maximum. CME strike searches use only the matching expiry reference chain. Global strike adjustment fixes H and strike ratios, with an explicit 0.01–100x search range. Every custom combination compares the same x separately; it is not one aggregated portfolio.
+
+- V3.7: workbench-budget shares per-leg executed prices, actual rounding and opening fees with strategy; budget is max(net premium + opening option fees, 0). Preserve disabled legs and each expiry/product. Quantity max uses full repayment cap, aggregate 1:1 and complete CME bundles; strike adjustment leaves quantities fixed. Never call the clientConfig coercion from workbench. Lock freezes the budget only, not manual inputs; label infeasible drafts.
+- chart-range custom axes affect display only and stay fixed outside the selected case. Invalid ranges retain the last valid viewport. Never derive global bounds from chart extrema.
+- Module IDs in module-catalog are stable. Preferences in chf-module-layout-v1 migrate unknown/duplicate entries safely and append new modules. Hidden modules stay mounted; do not discard their state or exclude hidden financial inputs from valuation/export. Maintain display zones and fixed navigation/error access.

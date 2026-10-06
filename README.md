@@ -1,4 +1,4 @@
-# CHF 领口对冲工作台 V3.6
+# CHF 领口对冲工作台 V3.7
 
 私有网站：[打开工作台](https://chf-collar-lab.gpt4both.chatgpt.site/) · [客户展示](https://chf-collar-lab.gpt4both.chatgpt.site/client) · [代表案例](https://chf-collar-lab.gpt4both.chatgpt.site/#expiry-cases) · [公式管理](https://chf-collar-lab.gpt4both.chatgpt.site/formulas#hedge-logic)
 
@@ -16,6 +16,14 @@ pnpm dev
 ```
 
 需要 Node.js 22.13+（建议 Node 24）和 pnpm 11.25.0。打开终端输出的网址。恢复脚本先核对 SHA-256，然后建立独立的 chf-collar-workbench/ 目录；已有同名目录时停止，避免覆盖。Codex 继续开发时打开恢复出的目录，先读 AGENTS.md、README.md，再运行 pnpm test、pnpm typecheck、pnpm build。提交展开的源码后即可作为普通 GitHub 项目开发。
+
+## V3.7 工作台预算、PNL图与页面设置
+
+- 策略工作台加入按预算调汇率、按预算调数量和锁定/解锁预算；锁定后每腿有汇率/数量 max，联动完整成本、现金流、到期案例和 Excel。预算为 max(净付权利金＋期权开仓费,0)，保证金与滚仓资金另列。
+- 数量求解保持买卖总量 1:1、同侧均分及 CME 整组整手，受全额本息上限约束。执行价求解固定各腿数量，匹配产品和到期日；OTC 没有有限最大执行价时明确解释，不虚构数值。
+- 图表改为 PNL图，原标题为使用提示。可自定义汇率横轴、USD 损益纵轴，保存于浏览器；无效范围保留上次有效值，视窗不改变全域收益边界。
+- 新增 /settings，可对工作台、客户展示、公式管理、API 管理和旧版实验室的模块显示/隐藏和分区排序，并恢复默认。隐藏保留计算状态和导出内容。
+- 97 组自动验证、类型检查及生产构建通过；浏览器核验预算/max、坐标范围、锁定与模块持久化、Excel 生成和 390px 无页面横向溢出。
 
 ## V3.6 最大预算、自由组合与 max
 
@@ -71,17 +79,19 @@ pnpm dev
 
 借款倍数 = 借款美元等值 / 自有本金，4 倍借款对应总资金 5 倍。S 为 USD/CHF。期权覆盖与边界依赖数量、期限、基差和路径假设；有限案例不能替代全局边界。
 
+[页面设置](https://chf-collar-lab.gpt4both.chatgpt.site/settings) · [工作台预算公式](https://chf-collar-lab.gpt4both.chatgpt.site/formulas#workbench-budget)
+
 ## 交付文件与验证
 
 | 文件 | 内容 |
 | --- | --- |
-| chf-collar-workbench-source.zip | 178 个受版本控制的源文件，含完整应用、测试、锁定依赖、开发说明和部署配置 |
+| chf-collar-workbench-source.zip | 186 个受版本控制的源文件，含完整应用、测试、锁定依赖、开发说明和部署配置 |
 | chf-collar-workbench-website.tar.gz | 与已发布版本一致的客户端和服务端构建，不是双击 HTML 的静态网页 |
 | restore-source.sh | 安全恢复项目目录 |
 | SHA256SUMS | 两个交付包校验值 |
 
-源码版本：e132d2d4fad6ea8ac09fcebf58248644c79edfef。Sites 部署：appgdep_6ac525cc8c948191ba82a8da31d93bbf，2026-10-07（香港时间）状态 succeeded。
+源码版本：155d4600ed62024cdb124ec5bcc7179299391f1f。Sites 部署：appgdep_6ac542be66808191ac1f6f47b08dc5cd，2026-10-07（香港时间）状态 succeeded。
 
-88 组测试通过，TypeScript 与生产构建通过。客户页浏览器验证了预算锁定/解锁、汇率/数量求解、逐腿 max、预算滑块、净／总权利金、OTC/CME、案例增删、三腿买卖 1:1、刷新持久化和 390px 手机布局。现有 Excel 回归包含独立 Sheet、公式和每例资金勾稽。
+97 组测试通过，TypeScript 与生产构建通过。浏览器验证工作台预算按钮与 max、坐标范围、模块显示与排序、刷新保存及 390px 手机布局。隐藏案例时 Excel 仍能生成全部案例；真实 XLSX 回归包含独立 Sheet、公式和每例资金勾稽。
 
 不要提交令牌、.env 或浏览器个人方案。GitHub 备份不会自动发布 Sites。
