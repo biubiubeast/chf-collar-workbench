@@ -1,4 +1,4 @@
-# CHF 领口对冲工作台 V3.5
+# CHF 领口对冲工作台 V3.6
 
 私有网站：[打开工作台](https://chf-collar-lab.gpt4both.chatgpt.site/) · [客户展示](https://chf-collar-lab.gpt4both.chatgpt.site/client) · [代表案例](https://chf-collar-lab.gpt4both.chatgpt.site/#expiry-cases) · [公式管理](https://chf-collar-lab.gpt4both.chatgpt.site/formulas#hedge-logic)
 
@@ -16,6 +16,15 @@ pnpm dev
 ```
 
 需要 Node.js 22.13+（建议 Node 24）和 pnpm 11.25.0。打开终端输出的网址。恢复脚本先核对 SHA-256，然后建立独立的 chf-collar-workbench/ 目录；已有同名目录时停止，避免覆盖。Codex 继续开发时打开恢复出的目录，先读 AGENTS.md、README.md，再运行 pnpm test、pnpm typecheck、pnpm build。提交展开的源码后即可作为普通 GitHub 项目开发。
+
+## V3.6 最大预算、自由组合与 max
+
+- 客户预算区新增“按预算调汇率”“按预算调数量”“锁定/解锁预算”。锁定预算冻结金额、滑块、快捷金额和口径；自由组合汇率及数量旁显示逐腿 max。
+- 汇率按钮固定数量、同比调整所有行权价至最近可行预算边界；数量按钮固定所有汇率、最大化每侧数量。编辑单腿数量时，同步组内均分及另一侧总量，维持买卖 1:1。CME 数量必须构成整组整手。
+- 汇率 max 固定数量及其他腿：OTC 有限边界二分求解，无有限上界时解释并保留原值；CME 只选匹配到期日参考链中最大可行行权价。全局同比行权价搜索范围为当前行权价的 0.01–100 倍。
+- 自由组合支持自动预算数量与固定手动数量。明确显示实际权利金、剩余预算和超预算；不静默缩小输入。每组独立比较同一个最大预算，保证金、费用、滚仓资金单列。费用、案例、收益图和全域上下界联动使用同一个实际持仓。
+- 预算锁定及自定义组合在客户页原浏览器键中独立保存，刷新保留。公式管理解释完整求解逻辑、有限/无限边界和参考链限制。
+- 新增 9 组预算验证，总计 88 组通过，类型检查与生产构建通过。浏览器验证 OTC/CME、预算三按钮、逐腿有限/无限汇率 max、1:1 数量、费用和案例联动、锁定持久化及 390px 手机布局。
 
 ## V3.5 全额远期、客户基础参数与一年期限
 
@@ -66,13 +75,13 @@ pnpm dev
 
 | 文件 | 内容 |
 | --- | --- |
-| chf-collar-workbench-source.zip | 175 个受版本控制的源文件，含完整应用、测试、锁定依赖、开发说明和部署配置 |
+| chf-collar-workbench-source.zip | 178 个受版本控制的源文件，含完整应用、测试、锁定依赖、开发说明和部署配置 |
 | chf-collar-workbench-website.tar.gz | 与已发布版本一致的客户端和服务端构建，不是双击 HTML 的静态网页 |
 | restore-source.sh | 安全恢复项目目录 |
 | SHA256SUMS | 两个交付包校验值 |
 
-源码版本：065c4eb2ff9673af4b5fb4d87ecc94d16806e6dc。Sites 部署：appgdep_6ac51e96f40c81919aa78cb92531cb49，2026-10-07（香港时间）状态 succeeded。
+源码版本：e132d2d4fad6ea8ac09fcebf58248644c79edfef。Sites 部署：appgdep_6ac525cc8c948191ba82a8da31d93bbf，2026-10-07（香港时间）状态 succeeded。
 
-79 组测试通过，TypeScript 与生产构建通过。客户页浏览器验证了预算滑块、净／总权利金、OTC/CME、案例增删、三腿买卖 1:1、刷新持久化和 390px 手机布局。现有 Excel 回归包含独立 Sheet、公式和每例资金勾稽。
+88 组测试通过，TypeScript 与生产构建通过。客户页浏览器验证了预算锁定/解锁、汇率/数量求解、逐腿 max、预算滑块、净／总权利金、OTC/CME、案例增删、三腿买卖 1:1、刷新持久化和 390px 手机布局。现有 Excel 回归包含独立 Sheet、公式和每例资金勾稽。
 
 不要提交令牌、.env 或浏览器个人方案。GitHub 备份不会自动发布 Sites。
