@@ -1,8 +1,8 @@
-# CHF 领口对冲工作台 V3.8
+# CHF 领口对冲工作台 V4.4
 
-[策略工作台](https://chf-collar-lab.gpt4both.chatgpt.site/) · [盈亏平衡与概率公式管理](https://chf-collar-lab.gpt4both.chatgpt.site/formulas#probability-models) · [客户展示](https://chf-collar-lab.gpt4both.chatgpt.site/client) · [页面设置](https://chf-collar-lab.gpt4both.chatgpt.site/settings)
+[客户展示](https://chf-collar-lab.gpt4both.chatgpt.site/client) · [策略工作台](https://chf-collar-lab.gpt4both.chatgpt.site/) · [公式管理](https://chf-collar-lab.gpt4both.chatgpt.site/formulas#external-premium)
 
-完整源代码和与已发布版本一致的网站构建备份。网站仍由 Sites 私有托管；仓库是私有的。完整源码位于 ZIP 中，恢复脚本会建立独立的 chf-collar-workbench/ 项目目录，便于 Codex 继续开发。
+完整源码和与已发布版本一致的 Worker / 浏览器构建备份。GitHub 仓库保持私有；现有 Sites 访问方式保持不变，应用的账户登录与服务端权限保护仍生效。运行时密码哈希、会话密钥与 D1 数据不包含在此备份中。
 
 ## 恢复与继续开发
 
@@ -15,31 +15,28 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-需要 Node.js >=22.13（建议 Node 24）和 pnpm 11.25.0。先读恢复后的 AGENTS.md 与 README.md，运行 pnpm test、pnpm typecheck、pnpm build。恢复脚本先验证 SHA-256；若已有同名源码目录，会停止而不会覆盖。后续可将展开的源文件提交为普通 GitHub 源码目录。GitHub 备份不会自动发布 Sites。
+使用 Node.js >=22.13（建议 Node 24）和 pnpm 11.25.0。先读恢复后项目中的 AGENTS.md 与 README.md。恢复脚本验证 SHA-256 并建立独立 chf-collar-workbench/ 目录，已有目录时停止。恢复后的源文件可提交成普通项目目录继续开发；GitHub 本身不自动发布 Sites。受保护完整页面的本地运行需要按 README 配置独立的测试密钥和 D1，不能复制生产凭据或关闭服务端认证。
 
-## V3.8 本次更新
+## V4.4 更新
 
-- PNL 图计算全部 PNL=0 与 PNL=纯美元本金存款收益交点，含 USD/CHF、倒数 USDCHF 与相对起点涨跌幅。美元基准默认 4.75%，同目标日单利，可切换年复利和利率。
-- 复用完整融资、权利金、费用、远期和滚仓引擎；支持多个交点、收益平台、无限尾部和晚到期 Black 数值隔离。未决质量单列，不使用图表视窗代替全域求解。
-- 可选 P 对数正态、Q 远期/平坦 IV 对数正态、历史同期限频率、stationary block bootstrap。显示盈利/亏损、跑赢/跑输/相等及任意终值、涨跌幅和邻近区间概率；区分连续点概率与收益平台。
-- ECB 官方日度历史获取与 CSV 导入、历史 μ/σ 估算、样本期、种子、区块长度、命名记录和 JSON 备份。实时连接失败明确显示有日期的真实官方历史快照，防止前视和伪造数据。
-- 公式页记录完整算法链条、P/Q 区别、CME 现货/期货映射、校准限制和研究来源。Q 为定价概率，默认 P 参数只是敏感性假设；未将 smile/GARCH 伪装成已校准可用模型。
-- 保留既有融资、预算/max、客户策略、CME 滚仓、到期案例、逐腿收益、Excel、远期、公式编辑及模块布局功能。
+- 两个 PNL 图保留盈亏平衡、追平本金存款、汇率不变点；默认隐藏点位描述，悬停、聚焦或手机点按显示。查看提示不会修改情景，近邻点不会抢占彼此中心。
+- 客户展示支持每条启用期权独立 IV，默认 Call 8%、Put 8.5% 为用户提供的示例，已有逐腿设置优先。独立重算开仓权利金、未到期价值、Greeks 和边界，统一／参考 IV 模式保留。
+- 新增“全额存款 · 期权费用外付”，保留原有费用内扣方式。全额存款为 E+L*S0；外付净投入 C=净权利金+全部期初费用+保证金+储备。费用与可返还资金占用分开，净收益 PNL=实际到期净资产−E−C。
+- 到期案例、概率、全域边界、预期净资产、现金流、公式对话框和 Excel 使用同一资金模型。4.75% 对照及本金收益率仍以原 E 计；外付模式另列全投入收益率。C<0 表示期初净收款分配。
+- 包含此前 CME 期限/Greeks、独立客户展示、服务端账户权限及管理设置等已发布功能。
 
 ## 交付与验证
 
 | 文件 | 内容 |
 | --- | --- |
-| chf-collar-workbench-source.zip | 196 个版本控制文件，含完整应用、测试、锁定依赖、开发说明与部署配置 |
-| chf-collar-workbench-website.tar.gz | 与发布一致的服务端和客户端构建，包含 Worker API；不是双击 HTML 的静态网站 |
-| restore-source.sh | 验证校验值并安全恢复独立源码目录 |
-| SHA256SUMS | 两个交付包的 SHA-256 |
+| chf-collar-workbench-source.zip | 完整版本控制源码、锁定依赖、测试及开发说明 |
+| chf-collar-workbench-website.tar.gz | 与发布一致的 Worker 服务端和浏览器构建；不是双击 HTML 的静态网站 |
+| restore-source.sh | 校验并恢复独立源码目录 |
+| SHA256SUMS | 两个备份包的 SHA-256 |
 
-源码版本：22c01c65e49a37f27042709e3c7e3882a255597c。
-Sites 部署：appgdep_6ac85d903c74819195793f8d70d6a75c；2026-10-09（香港时间）发布成功。
+源码：1885e08da2083d11102b16ace8329d4aa49f38fa。
+Sites 版本：21；部署 appgdep_6ad81efcfad481919ae624584667facf，2026-10-21 香港时间发布成功。
 
-115 组自动验证通过（其中新增 18 组交点、分布、历史及 API 验证），类型检查和生产构建通过。本地浏览器验证四模型切换、实际 ECB 历史、基准交点联动、参数记录与跨页保存、绝对汇率/涨跌幅查询及 390px 无页面横向溢出。原 Excel 的独立案例和双币现金勾稽回归保持通过。
+218 项验证通过，类型检查及生产构建通过。本地隔离组件预览验证了逐腿 IV 成本联动、原模式切换、500 万本金全额存款与额外现金核对、两个图的三类提示、键盘/Escape、390px 页面与提示边界。线上网站可正常打开至应用登录页，未使用生产凭据验证登录后的页面。
 
-默认 P 的 μ=0% 和 σ=10% 不是实际胜率；Q 不能当作现实频率。CME 概率条件于滚仓汇率、IV、基差和路径假设，未模拟期间触及或随机滚仓成本。不要提交令牌、.env 或浏览器中的个人方案。
-
-生产浏览器复核停在 ChatGPT 账户密钥验证；Sites 原生部署已确认 succeeded。
+示例 IV 不是实时银行报价，也不是已校准的波动率微笑；未来 CME 滚仓 IV 是独立假设。保留原有 P/Q、跨期、基差、流动性和保证金限制。不要提交 .env、.dev.vars、令牌、密码或浏览器个人状态。
