@@ -1,0 +1,26 @@
+{
+  "product_version": "V5.2.0",
+  "package_version": "0.5.2",
+  "source_tag": "v5.2.0",
+  "previous_commit": "28b3dc7c6b3f6bcbefe29bdb45ae40aed2371508",
+  "validated_on": "2026-11-04",
+  "timezone": "Asia/Hong_Kong",
+  "validation": {
+    "full_regression": "passed",
+    "pass_records": 336,
+    "typecheck": "passed",
+    "production_build": "passed",
+    "local_http": {"login": 200, "unauthenticated_client": 303, "unauthenticated_api": 401},
+    "browser_interaction": "not_verified",
+    "native_excel_recalculation": "not_verified"
+  },
+  "github": {"status": "awaiting_connection", "push_confirmed": false},
+  "sites": {
+    "project_id": "appgprj_6ac26409050481919f506a1082bb74e7",
+    "status": "awaiting_project_access",
+    "last_access_error": "NOT_FOUND",
+    "saved_version_id": null,
+    "deployment_id": null,
+    "production_url": "https://chf-collar-lab.gpt4both.chatgpt.site"
+  }
+}

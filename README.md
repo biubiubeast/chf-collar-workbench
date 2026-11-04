@@ -1,42 +1,37 @@
-# CHF 领口对冲工作台 V4.4
+# CHF 领口对冲工作台 V5.2.0
 
-[客户展示](https://chf-collar-lab.gpt4both.chatgpt.site/client) · [策略工作台](https://chf-collar-lab.gpt4both.chatgpt.site/) · [公式管理](https://chf-collar-lab.gpt4both.chatgpt.site/formulas#external-premium)
+最新可开发源码位于 [chf-collar-workbench/](chf-collar-workbench/)。直接打开该目录继续开发，无需先解压旧交付包。
 
-完整源码和与已发布版本一致的 Worker / 浏览器构建备份。GitHub 仓库保持私有；现有 Sites 访问方式保持不变，应用的账户登录与服务端权限保护仍生效。运行时密码哈希、会话密钥与 D1 数据不包含在此备份中。
+- 客户展示：https://chf-collar-lab.gpt4both.chatgpt.site/client
+- 已验证源提交：`1283338c4c71d495b87384744cf1a39f71feeef5`；本地标签：`v5.2.0`。
+- 源目录 Git tree：`bfe11a69e757183679c60422b8ac1d79addee098`；本次上传保留该目录的完整版本控制文件。
+- V5.2.0 已完成本地修复和验证，**尚未发布到 Sites**。B 读取原 Sites 项目仍返回 NOT_FOUND，不应将 GitHub 上传当成网站已更新。
 
-## 恢复与继续开发
+## 继续开发
+
+先读 [AGENTS.md](chf-collar-workbench/AGENTS.md)、[README.md](chf-collar-workbench/README.md) 和 [账号 B 交接资料](chf-collar-workbench/MIGRATION-TO-ACCOUNT-B.md)。
 
 ```sh
 git clone https://github.com/biubiubeast/chf-collar-workbench.git
-cd chf-collar-workbench
-sh restore-source.sh
-cd chf-collar-workbench
+cd chf-collar-workbench/chf-collar-workbench
 pnpm install --frozen-lockfile
-pnpm dev
+pnpm test
+pnpm typecheck --incremental false
+pnpm build
 ```
 
-使用 Node.js >=22.13（建议 Node 24）和 pnpm 11.25.0。先读恢复后项目中的 AGENTS.md 与 README.md。恢复脚本验证 SHA-256 并建立独立 chf-collar-workbench/ 目录，已有目录时停止。恢复后的源文件可提交成普通项目目录继续开发；GitHub 本身不自动发布 Sites。受保护完整页面的本地运行需要按 README 配置独立的测试密钥和 D1，不能复制生产凭据或关闭服务端认证。
+需要 Node >=22.13（建议24）和 pnpm 11.25.0。本地预览还需在该源码目录配置被 Git 忽略的 .dev.vars 和本地 D1；不要复制生产秘密到仓库或聊天。
 
-## V4.4 更新
+## V5.2.0
 
-- 两个 PNL 图保留盈亏平衡、追平本金存款、汇率不变点；默认隐藏点位描述，悬停、聚焦或手机点按显示。查看提示不会修改情景，近邻点不会抢占彼此中心。
-- 客户展示支持每条启用期权独立 IV，默认 Call 8%、Put 8.5% 为用户提供的示例，已有逐腿设置优先。独立重算开仓权利金、未到期价值、Greeks 和边界，统一／参考 IV 模式保留。
-- 新增“全额存款 · 期权费用外付”，保留原有费用内扣方式。全额存款为 E+L*S0；外付净投入 C=净权利金+全部期初费用+保证金+储备。费用与可返还资金占用分开，净收益 PNL=实际到期净资产−E−C。
-- 到期案例、概率、全域边界、预期净资产、现金流、公式对话框和 Excel 使用同一资金模型。4.75% 对照及本金收益率仍以原 E 计；外付模式另列全投入收益率。C<0 表示期初净收款分配。
-- 包含此前 CME 期限/Greeks、独立客户展示、服务端账户权限及管理设置等已发布功能。
+页面、Excel 情景/历史/模拟路径/期望与有限边界收益率统一按原本金加净期权支出正值计算，分母不含借款。加入 OTC 精确尾部数量调整、CME 整手补足、图表范围解释与默认收起持平概率。重建方案会清除上一轮尾部数量覆盖值。
 
-## 交付与验证
+完整回归包含 336 条 PASS 记录；类型检查和生产构建通过；本地登录页200、未登录客户页303、受保护API401。未在本次会话进行登录后的浏览器操作或原生 Excel 应用重算。
 
-| 文件 | 内容 |
-| --- | --- |
-| chf-collar-workbench-source.zip | 完整版本控制源码、锁定依赖、测试及开发说明 |
-| chf-collar-workbench-website.tar.gz | 与发布一致的 Worker 服务端和浏览器构建；不是双击 HTML 的静态网站 |
-| restore-source.sh | 校验并恢复独立源码目录 |
-| SHA256SUMS | 两个备份包的 SHA-256 |
+## 版本与发布
 
-源码：1885e08da2083d11102b16ace8329d4aa49f38fa。
-Sites 版本：21；部署 appgdep_6ad81efcfad481919ae624584667facf，2026-10-21 香港时间发布成功。
+[发布说明](chf-collar-workbench/releases/V5.2.0.md) · [Q&A文档](chf-collar-workbench/docs/CHF-Collar-Lab-V5.2.0-QA.docx)
 
-218 项验证通过，类型检查及生产构建通过。本地隔离组件预览验证了逐腿 IV 成本联动、原模式切换、500 万本金全额存款与额外现金核对、两个图的三类提示、键盘/Escape、390px 页面与提示边界。线上网站可正常打开至应用登录页，未使用生产凭据验证登录后的页面。
+源码目录中的发布状态文件保留源快照时的检查结果；仓库根部 RELEASE.json 记录此次 GitHub 同步身份和来源。没有新的 Sites saved-version/deployment ID。
 
-示例 IV 不是实时银行报价，也不是已校准的波动率微笑；未来 CME 滚仓 IV 是独立假设。保留原有 P/Q、跨期、基差、流动性和保证金限制。不要提交 .env、.dev.vars、令牌、密码或浏览器个人状态。
+根目录已有的 source.zip、website.tar.gz、restore-source.sh 和 SHA256SUMS 是 V4.4 历史交付物。新开发使用上面的源码目录；旧恢复脚本遇到现有目录会停止。历史备份保持原样。

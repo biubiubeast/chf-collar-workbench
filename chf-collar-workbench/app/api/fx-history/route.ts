@@ -1,0 +1,9 @@
+import {crossECBHistory} from '@/lib/fx-history';
+import snapshot from '@/lib/data/ecb-spot-history.json';
+export async function GET(request:Request){
+ const u=new URL(request.url),today=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Hong_Kong',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()),end=u.searchParams.get('end')||today,start=u.searchParams.get('start')||`${Number(end.slice(0,4))-10}${end.slice(4)}`;
+ const date=(s:string)=>/^\d{4}-\d{2}-\d{2}$/.test(s)&&Number.isFinite(Date.parse(s))&&new Date(s).toISOString().slice(0,10)===s;
+ if(!date(start)||!date(end)||start>=end||end>today||(Date.parse(end)-Date.parse(start))/86400000>15*366)return Response.json({error:'历史查询须为有效日期、最长 15 年且不晚于今天'},{status:400});
+ const sources=['USD','CHF'].map(currency=>`https://data-api.ecb.europa.eu/service/data/EXR/D.${currency}.EUR.SP00.A?startPeriod=${start}&endPeriod=${end}&format=csvdata`);
+ try{const data=await Promise.all(sources.map(async url=>{const res=await fetch(url,{signal:AbortSignal.timeout(12000),headers:{Accept:'text/csv'}});if(!res.ok)throw Error(`ECB HTTP ${res.status}`);const text=await res.text();if(text.length>10000000)throw Error('ECB 响应过大');return text;}));const history=crossECBHistory(data[0],data[1],new Date().toISOString());return Response.json({...history,sourceURLs:sources},{headers:{'Cache-Control':'private, max-age=3600'}});}catch(e){const error=e instanceof Error&&/^ECB HTTP \d+$/.test(e.message)?e.message:'ECB 上游历史连接暂不可用',rows=snapshot.rows.filter(r=>r.date>=start&&r.date<=end);if(rows.length>=30)return Response.json({...snapshot,rows,source:`ECB 官方历史快照（实时获取失败；快照截止 ${snapshot.rows.at(-1)!.date}；当前返回 ${rows[0].date}–${rows.at(-1)!.date}）`,kind:'dated-fallback',liveError:error,requestedRange:{start,end},notice:'实时获取失败，使用有日期的官方历史快照；未扩展或模拟缺失数据。'},{headers:{'Cache-Control':'private, max-age=60'}});return Response.json({error,source:'unavailable',sourceURLs:sources},{status:503});}
+}
