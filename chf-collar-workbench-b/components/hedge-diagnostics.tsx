@@ -1,4 +1,6 @@
 'use client';
+import {appPath} from "@/lib/app-path";
+
 import type {StrategyResult} from '@/lib/strategy';
 import {money,number,percent,Table} from './lab-ui';
 
@@ -8,7 +10,7 @@ export default function HedgeDiagnostics({r,onCoverTail}:{r:StrategyResult;onCov
  const single=!r.forwards.length&&r.exact&&r.legs.length===1&&calls.length===1&&calls[0].side==='buy'&&Math.abs(calls[0].h-r.n)<1e-6;
  const k=Math.max(...r.legs.map(l=>l.strike),r.c.high);
  const points=[...new Set([r.c.spot,k,Math.max(k,r.c.spot)*1.1,Math.max(k,r.c.spot)*1.5])].sort((a,b)=>a-b);
- return <section className="panel hedge-diagnostics" aria-label="Call 保护核对"><div className="panel-heading"><h2>Call 到底抵销了多少汇率损失？</h2><a className="text-button" href="/formulas#hedge-logic">完整公式与算法</a></div>
+ return <section className="panel hedge-diagnostics" aria-label="Call 保护核对"><div className="panel-heading"><h2>Call 到底抵销了多少汇率损失？</h2><a className="text-button" href={appPath("/formulas#hedge-logic")}>完整公式与算法</a></div>
  <p>“CHF 本金汇兑损益”是未对冲的一项。期权抵销列在“期权价值”，两项必须一起看；足额 Call 从执行价开始赔付，不能抹去起点到执行价的涨幅。</p>
  <div className="summary-row"><div><span>到期 CHF 本息</span><strong>{number(r.n,2)}</strong></div><div><span>净买入 Call 实际数量</span><strong>{number(bought-sold,2)}</strong></div><div><span>本息数量覆盖</span><strong>{percent((bought-sold)/Math.max(r.n,1))}</strong></div></div>
  {bought-sold+r.forwardCHF<r.n-.001&&<div className="warning">净 Call 数量少于到期本息 {number(r.n-bought+sold-r.forwardCHF,2)} CHF。只覆盖借款本金会遗漏 CHF 利息；CME 向下取整也可能造成缺口。</div>}

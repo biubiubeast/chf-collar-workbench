@@ -1,4 +1,6 @@
 'use client';
+import {appPath} from "@/lib/app-path";
+
 import {useEffect,useMemo,useState} from 'react';
 import {cdf,days,year,type Config} from '@/lib/finance';
 import {initialConfig} from '@/lib/strategy';
@@ -77,7 +79,7 @@ export default function OtcModelGuide({overrides}:{overrides:Overrides}){
   <p>Greeks 展示的是当前存续期权持仓的局部中价敏感度，不包含借款本息、定存、已结算滚仓现金或成交摩擦。若要看整个策略对汇率的变化，还须将 CHF 负债的 Delta 等项加入。当前及还款日的剩余价值由完整定价算出，不是把 Greeks 逐项相加。</p>
   <div className="formula">小变动检查：ΔV ≈ Delta×ΔS + ½×Gamma×(ΔS)² + Vega₁vol×ΔIV百分点 + Theta×Δ天数<br/>滚仓预算：旧腿按当日条件完整重价并平仓 ＋ 新腿按当日条件完整重价并建仓 ＋ 两边成交成本、费用及资金占用</div>
   <p>比较 OTC 与 CME 时，保持估值日、现货情景和 IV 假设一致，并核对实际名义本金、期权到期日及期货代码。不同到期、不同 IV、CME 取整和剩余时间价值都会改变指标。固定 spread 会移动净收益，但不会单独使严格同日、同 fixing、同数量的到期尾部产生斜率。</p>
-  <p><a href="https://www.lme.com/en/trading/contract-types/options/black-scholes-76-formula" target="_blank" rel="noreferrer">Black76 价格结构参考</a>（仅参考通用形式，本工具不使用 LME 合约特有的额外 14 天折现） · <a href="#cme-roll">滚仓现金与完整重价算法</a> · <a href="/">返回工作台展开 Greeks</a></p>
+  <p><a href="https://www.lme.com/en/trading/contract-types/options/black-scholes-76-formula" target="_blank" rel="noreferrer">Black76 价格结构参考</a>（仅参考通用形式，本工具不使用 LME 合约特有的额外 14 天折现） · <a href="#cme-roll">滚仓现金与完整重价算法</a> · <a href={appPath("/")}>返回工作台展开 Greeks</a></p>
  </section>
  </div>;
 }

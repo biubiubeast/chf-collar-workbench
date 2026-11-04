@@ -1,3 +1,7 @@
+# Ubuntu deployment branch
+
+This branch implements the user-authorized company-server deployment at https://bill.spailab.com/FXCollar/. Read ubuntu/README.md. Use the Next.js production build (pnpm build:ubuntu), Node middleware and local SQLite adapter. Preserve financial behavior, original A source, Sites project IDs and live Sites deployments. Do not publish this branch to Sites. Keep original profile exports, runtime configuration, SQLite files and credentials outside Git. Run pnpm test, pnpm typecheck --incremental false, NEXT_PUBLIC_BASE_PATH=/FXCollar pnpm build:ubuntu, and pnpm test:ubuntu.
+
 # CHF workbench development
 
 Independent CHF project with application-level administrator/client authentication. Do not edit the parent gold-options application.

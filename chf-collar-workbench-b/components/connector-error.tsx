@@ -1,3 +1,5 @@
+
+import {appPath} from "@/lib/app-path";
 import { LinkIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { connectorErrorRecovery } from "@/lib/connector-errors.mjs";
@@ -25,7 +27,7 @@ export function ConnectorError({
           variant="outline"
           className="h-auto min-h-9 max-w-full whitespace-normal text-left"
         >
-          <a href={recovery.action.href} target="_top">
+          <a href={appPath(recovery.action.href)} target="_top">
             <LinkIcon aria-hidden="true" />
             <span className="min-w-0 break-words">{recovery.action.label}</span>
           </a>

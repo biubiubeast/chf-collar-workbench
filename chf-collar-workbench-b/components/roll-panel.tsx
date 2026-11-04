@@ -1,4 +1,6 @@
 'use client';
+import {appPath} from "@/lib/app-path";
+
 import type {Config} from '@/lib/finance';
 import type {StrategyResult} from '@/lib/strategy';
 import {defaultRoll,type RollSettings} from '@/lib/cme-roll';
@@ -13,7 +15,7 @@ export function RollControls({c,onChange}:{c:Config;onChange:(q:RollSettings)=>v
  <Input label="每手追加保证金预算" value={q.marginPerLot} step={100} unit="USD" onChange={v=>set({marginPerLot:v})}/>
  <Input label="收支错时垫款天数" value={q.settlementLagDays} step={1} unit="天" onChange={v=>set({settlementLagDays:v})}/>
  <button className="text-button" onClick={()=>set({spot:undefined,oldIV:undefined,newIV:undefined,date:undefined})}>恢复自动汇率、IV 与日期假设</button>
- <p className="mini">未来价格未知。默认滚仓汇率跟随 S₀，IV 沿用逐腿校准值；所有到期案例共享这些假设。一年期存款不提前解约，滚仓缺口另按补充融资利率融资。0 追加保证金仅为输入假设。</p></>}<a href="/formulas#cme-roll" className="text-button">滚仓公式、官方日期与实操安排</a></details>;
+ <p className="mini">未来价格未知。默认滚仓汇率跟随 S₀，IV 沿用逐腿校准值；所有到期案例共享这些假设。一年期存款不提前解约，滚仓缺口另按补充融资利率融资。0 追加保证金仅为输入假设。</p></>}<a href={appPath("/formulas#cme-roll")} className="text-button">滚仓公式、官方日期与实操安排</a></details>;
 }
 export function RollPlan({r}:{r:StrategyResult}){
  if(!r.legs.some(l=>l.venue==='CME'))return null;

@@ -1,4 +1,6 @@
 'use client';
+import {appPath} from "@/lib/app-path";
+
 import {useMemo,useState} from 'react';
 import {distribution,fxProbabilities,outcomeProbabilities,type Distribution} from '@/lib/probability';
 import {crossings,benchmarkProfit,type Crossing} from '@/lib/outcome-analysis';
@@ -15,7 +17,7 @@ function ProbabilityRow({q,d,r,target,label}:{q:Crossing;d:Distribution;r:Strate
 export default function ProbabilityAnalysis({r,scenario,mode,value}:{r:StrategyResult;scenario:number;mode:'terminal'|'mark';value:OutcomeAnalysis}){
  const {store,analysis:a,prob}=value,[query,setQuery]=useState<number|null>(null),[queryMode,setQueryMode]=useState<'rate'|'move'>('rate'),[width,setWidth]=useState(.005);const s=query===null?scenario:queryMode==='rate'?query:r.c.spot*(1+query/100);let fx=null,fxError='';try{if(prob.d)fx=fxProbabilities(prob.d,s,width);}catch(e){fxError=e instanceof Error?e.message:'查询无效';}
  const targets=[{name:'盈亏平衡 · PNL = 0',target:0,q:a.zero},{name:`美元存款 · PNL = PNL_origin`,target:a.origin,q:a.deposit}];
- return <section className="probability-analysis" aria-label="到期交点与概率分析"><div className="panel-heading"><div><div className="eyebrow">TERMINAL OUTCOMES</div><h3>盈亏平衡 · 美元存款交点 · 到期概率</h3><p className="mini">目标日 {r.c.end} · 本金 {money(r.c.equity)} · T={number(r.t,6)} 年 · 纯美元存款基准 {percent(store.state.settings.benchmarkRate)}</p></div><a className="ghost" href="/formulas#probability-models">算法与管理</a></div>
+ return <section className="probability-analysis" aria-label="到期交点与概率分析"><div className="panel-heading"><div><div className="eyebrow">TERMINAL OUTCOMES</div><h3>盈亏平衡 · 美元存款交点 · 到期概率</h3><p className="mini">目标日 {r.c.end} · 本金 {money(r.c.equity)} · T={number(r.t,6)} 年 · 纯美元存款基准 {percent(store.state.settings.benchmarkRate)}</p></div><a className="ghost" href={appPath("/formulas#probability-models")}>算法与管理</a></div>
  <div className="notice">PNL_origin = {money(a.origin,2)}：仅初始 USD 本金按基准利率存到同一目标日，{store.state.settings.compound?'年复利':'单利'}，不借款、不买期权；基准不随策略投资利率或自定义 growth 公式改写。</div>{mode==='mark'&&<p className="warning">上方曲线为期前估值；此处交点与概率始终分析目标日完整 PNL，未把期前市值当作到期赔付。</p>}
  {!r.bound&&<p className="warning">当前自定义赔付 / 定价公式不支持标准交点隔离；组合交点和结果概率已停用。下方汇率分布查询仍可使用。</p>}{a.error&&<p className="warning">{a.error}</p>}
  {prob.d&&<p className={`notice ${prob.d.kind==='Q'?'risk-neutral':''}`}><b>{prob.d.label}</b> · {prob.d.details}{prob.d.kind==='Q'&&<><br/><b>Q 是风险中性定价概率，不能称作现实发生频率。</b></>}</p>}

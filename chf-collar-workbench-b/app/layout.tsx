@@ -1,3 +1,4 @@
+import {appPath} from "@/lib/app-path";
 import type { Metadata } from "next";
 import "./globals.css";
 import "./presentation.css";
@@ -8,8 +9,8 @@ export const metadata: Metadata = {
   title: "CHF 领口对冲工作台",
   description: "设计瑞郎领口期权，分析成本、收益边界、期限缺口与完整资金流。",
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    icon: appPath("/favicon.svg"),
+    shortcut: appPath("/favicon.svg"),
   },
 };
 

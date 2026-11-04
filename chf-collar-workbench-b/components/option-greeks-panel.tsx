@@ -1,4 +1,6 @@
 'use client';
+import {appPath} from "@/lib/app-path";
+
 import {useMemo,useState} from 'react';
 import type {StrategyResult} from '@/lib/strategy';
 import {days} from '@/lib/finance';
@@ -18,7 +20,7 @@ export default function OptionGreeksPanel({r,showFormulaLink=true}:{r:StrategyRe
  ],[r,iv]);
  const opening=snapshots[0].data.options;
  return <details className="panel" id="option-greeks-details"><summary>查看逐腿 Greeks 与剩余价值</summary>
- <div className="panel-heading"><h2>欧式期权：剩余价值与 Greeks 对比</h2>{showFormulaLink&&<a className="text-button" href="/formulas#option-greeks">算法、OTC 全流程与单位</a>}</div>
+ <div className="panel-heading"><h2>欧式期权：剩余价值与 Greeks 对比</h2>{showFormulaLink&&<a className="text-button" href={appPath("/formulas#option-greeks")}>算法、OTC 全流程与单位</a>}</div>
  <p>推荐普通欧式合约采用解析 Black76 Delta、Gamma、Vega，再按实际曲线完整重估一天计算 Theta。OTC 使用双币种远期，等价于 Garman–Kohlhagen；CME 使用对应季度期货。IV、基差和盘口变化仍须单独压力测试。</p>
  <label className="check"><input type="checkbox" checked={stress} onChange={event=>setStress(event.target.checked)}/>统一采用压力 IV {percent(r.c.stressIV)}（关闭时沿用每条腿 IV）</label>
  <p className="mini">Delta 单位为 CHF 等效，S 每升 0.01 的一阶影响约为 Delta×0.01 USD；Gamma 为 USD/(USD/CHF)²；Vega 为 USD／IV 上升 1 个百分点；Theta 为固定当前 S、IV 后经过一日的 USD 重估差。以下均为有买卖符号的持仓金额，不含 spread、手续费和贷款 Delta。</p>

@@ -1,4 +1,6 @@
 'use client';
+import {appPath} from "@/lib/app-path";
+
 import {RefreshCw} from 'lucide-react';
 import {days,type Config} from '@/lib/finance';
 import type {CmeExpiryMode,CmeExpirySelection} from '@/lib/cme-expiry-policy';
@@ -36,6 +38,6 @@ export default function CmeExpiryControls({c,selection,onModeChange,onRefresh,bu
    <RefreshCw size={14} className={busy?'spin':''}/>{busy?'加载中…':'加载所选合约参考链'}
   </button>}
   <p className="mini">优先选择当前日历中已提供且已挂牌的最近合约。缺失月份可能有更近合约，须刷新日历并核实；规则推算不代表确认挂牌。结算参考价和模型估值均不是可成交 Bid/Ask。</p>
-  <a className="text-button" href="/formulas#cme-roll">查看期限、滚仓与平仓计算</a>
+  <a className="text-button" href={appPath("/formulas#cme-roll")}>查看期限、滚仓与平仓计算</a>
  </details>;
 }

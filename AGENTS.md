@@ -1,3 +1,7 @@
+# Company server deployment branch
+
+The deploy/ubuntu-fxcollar branch targets the Ubuntu server at bill@jpnode4. Its application is chf-collar-workbench-b/ and its deployment instructions are chf-collar-workbench-b/ubuntu/README.md. Preserve original A/B live Sites and their identities. This branch is not a Sites publication.
+
 # CHF Collar Lab repository
 
 The active app is `chf-collar-workbench-b/`, owned and deployed by account B. Open that directory and read its AGENTS.md, README.md and deployment records before editing.

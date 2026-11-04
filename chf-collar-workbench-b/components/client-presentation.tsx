@@ -1,4 +1,6 @@
 'use client';
+import {appPath} from "@/lib/app-path";
+
 import {useCallback,useEffect,useId,useMemo,useRef,useState,type ReactNode} from 'react';
 import type {DisplayConfig} from '@/lib/display-config';
 import type {Config} from '@/lib/finance';
@@ -44,7 +46,7 @@ const protectionStatuses=(r:StrategyResult,showBounds:boolean)=>[
 export default function ClientPresentation({config,variant,adminPreview=false,todayDefaults=true}:Props){
  const scenarioKey=useMemo(()=>{let hash=2166136261;const text=JSON.stringify(config.scenario);for(let i=0;i<text.length;i++)hash=Math.imul(hash^text.charCodeAt(i),16777619);return`${config.updatedAt}-${hash>>>0}-${variant}-${todayDefaults}`;},[config.scenario,config.updatedAt,variant,todayDefaults]);
  if(!config.controls.otc&&!config.controls.cme)return <main className="workspace presentation-workspace"><p className="warning">请在展示管理中至少开启 OTC 或 CME 一种交易方式。</p></main>;
- if(!config.scenario)return <main className="workspace presentation-workspace"><section className="panel presentation-empty"><div className="eyebrow">CHF COLLAR · 客户演示</div><h1>管理员尚未发布展示方案</h1><p>发布后，这里将展示已确认的策略、收益曲线和可调整的演示参数。</p>{adminPreview&&<a className="text-button" href="/display">前往展示管理发布方案</a>}</section></main>;
+ if(!config.scenario)return <main className="workspace presentation-workspace"><section className="panel presentation-empty"><div className="eyebrow">CHF COLLAR · 客户演示</div><h1>管理员尚未发布展示方案</h1><p>发布后，这里将展示已确认的策略、收益曲线和可调整的演示参数。</p>{adminPreview&&<a className="text-button" href={appPath("/display")}>前往展示管理发布方案</a>}</section></main>;
  return <PublishedClient key={scenarioKey} config={config} snapshot={config.scenario} variant={variant} adminPreview={adminPreview} todayDefaults={todayDefaults}/>;
 }
 
@@ -83,7 +85,7 @@ function PublishedClient({config,snapshot,variant,adminPreview,todayDefaults}:{c
  const editStartSpot=(value:string)=>{++inputRevision.current;cancelSpot();setSpotMode('manual');setSpotInput(value);setSpotQuote(null);setSpotLoading(false);setSpotError('');};
  const fetchLatest=useCallback(async(autoInput?:PresentationFundingInput)=>{
   cancelSpot();const request=spotRequest.current,revision=inputRevision.current,controller=new AbortController();spotAbort.current=controller;setSpotMode('latest');setSpotLoading(true);setSpotError('');
-  try{const response=await fetch('/api/spot',{cache:'no-store',credentials:'same-origin',signal:controller.signal}),raw=await response.json() as {error?:string};if(!response.ok)throw Error(raw.error||'最新参考汇率读取失败');const quote=parsePresentationSpotQuote(raw);if(controller.signal.aborted||request!==spotRequest.current)return;
+  try{const response=await fetch(appPath('/api/spot'),{cache:'no-store',credentials:'same-origin',signal:controller.signal}),raw=await response.json() as {error?:string};if(!response.ok)throw Error(raw.error||'最新参考汇率读取失败');const quote=parsePresentationSpotQuote(raw);if(controller.signal.aborted||request!==spotRequest.current)return;
    setSpotInput(String(quote.spot));setSpotQuote(quote);setSpotLoading(false);
    // Only an untouched initial/reset draft is automatically applied. Later
    // date/capital edits stay explicit even if their quote arrives afterwards.
@@ -120,7 +122,7 @@ function PublishedClient({config,snapshot,variant,adminPreview,todayDefaults}:{c
   const expiry=request.legs[0].expiry;
   const params=new URLSearchParams({expiry,legs:JSON.stringify(request.legs.map(({id,type,strike})=>({id,type,strike}))),rate:String(request.rate)});
   void(async()=>{try{
-   const response=await fetch(`/api/cme-iv?${params}`,{cache:'no-store',credentials:'same-origin',signal:controller.signal});
+   const response=await fetch(appPath(`/api/cme-iv?${params}`),{cache:'no-store',credentials:'same-origin',signal:controller.signal});
    const data=await response.json() as {legs?:CmeMarketIVResult[];error?:string};
    if(!response.ok)throw Error(data.error||'CME 市场 IV 读取失败');
    if(!Array.isArray(data.legs)||data.legs.length!==request.legs.length)throw Error('CME 市场 IV 返回不完整');

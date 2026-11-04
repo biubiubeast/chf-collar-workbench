@@ -1,0 +1,8 @@
+# Add inside bill's existing :3101 block, before its default handle.
+# Next.js keeps the /FXCollar prefix. Do not use handle_path here.
+redir /FXCollar /FXCollar/ 308
+handle /FXCollar/* {
+    reverse_proxy 127.0.0.1:3103 {
+        header_up CF-Connecting-IP {remote_host}
+    }
+}

@@ -1,4 +1,5 @@
-import {env as workerEnv} from 'cloudflare:workers';
+import {env as workerEnv} from './ubuntu-env';
+import {appPath,localPath} from './app-path';
 import {base64url,digest,signedValue,verifiedValue,verifyPassword} from './auth-crypto';
 import {readDisplayConfig} from './display-store';
 import type {Role} from './display-config';
@@ -13,9 +14,9 @@ export function database(env:SiteEnv=siteEnvironment()){if(!env.DB)throw new Aut
 function secret(env:SiteEnv){if(!env.SESSION_SECRET||env.SESSION_SECRET.length<32||!env.ADMIN_PASSWORD_HASH||!env.CLIENT_PASSWORD_HASH)throw new AuthError('网站登录尚未配置完成',503);return env.SESSION_SECRET;}
 export function json(value:unknown,status=200,headers:HeadersInit={}){return Response.json(value,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...headers}});}
 export function errorResponse(error:unknown){return json({error:error instanceof AuthError?error.message:'服务暂不可用，请稍后重试'},error instanceof AuthError?error.status:503);}
-export function sameOrigin(request:Request){const origin=request.headers.get('Origin');if(!origin||origin!==new URL(request.url).origin)throw new AuthError('请求来源无效，请刷新页面后重试',403);if(request.headers.get('Sec-Fetch-Site')==='cross-site')throw new AuthError('请求来源无效',403);}
+export function sameOrigin(request:Request){const origin=request.headers.get('Origin'),expected=process.env.PUBLIC_ORIGIN||new URL(request.url).origin;if(!origin||origin!==expected)throw new AuthError('请求来源无效，请刷新页面后重试',403);if(request.headers.get('Sec-Fetch-Site')==='cross-site')throw new AuthError('请求来源无效',403);}
 export async function readJson(request:Request,max=1024*1024){if(!request.headers.get('Content-Type')?.toLowerCase().startsWith('application/json'))throw new AuthError('请使用 JSON 请求',400);if(Number(request.headers.get('Content-Length')??0)>max)throw new AuthError('请求过大',413);const reader=request.body?.getReader();if(!reader)throw new AuthError('请求为空',400);const chunks:Uint8Array[]=[];let length=0;for(;;){const part=await reader.read();if(part.done)break;length+=part.value.byteLength;if(length>max){await reader.cancel();throw new AuthError('请求过大',413);}chunks.push(part.value);}const all=new Uint8Array(length);let at=0;for(const c of chunks){all.set(c,at);at+=c.length;}try{return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(all));}catch{throw new AuthError('JSON 格式无效',400);}}
-export function sessionCookie(token:string,request:Request,expire=false){const secure=new URL(request.url).protocol==='https:'?'; Secure':'';return `${COOKIE}=${expire?'':token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${expire?0:TTL}${secure}`;}
+export function sessionCookie(token:string,request:Request,expire=false){const secure=new URL(process.env.PUBLIC_ORIGIN||request.url).protocol==='https:'?'; Secure':'';return `${COOKIE}=${expire?'':token}; Path=${appPath('/')}; HttpOnly; SameSite=Lax; Max-Age=${expire?0:TTL}${secure}`;}
 function cookie(request:Request){return request.headers.get('Cookie')?.split(';').map(x=>x.trim()).find(x=>x.startsWith(COOKIE+'='))?.slice(COOKIE.length+1)??'';}
 export async function session(request:Request,env:SiteEnv=siteEnvironment()):Promise<Session|null>{
  const key=secret(env),token=cookie(request);if(!token)return null;const v=await verifiedValue(token,key),now=Math.floor(Date.now()/1000);
@@ -41,12 +42,12 @@ export async function login(request:Request,env:SiteEnv=siteEnvironment()){
 }
 export async function logout(request:Request,env:SiteEnv=siteEnvironment()){sameOrigin(request);const s=await session(request,env);if(s)await database(env).prepare('DELETE FROM site_sessions WHERE id_hash = ?').bind(await digest(s.id)).run();return json({user:null},200,{'Set-Cookie':sessionCookie('',request,true)});}
 export async function guardSiteRequest(request:Request,env:SiteEnv=siteEnvironment()):Promise<Response|null>{
- const url=new URL(request.url),path=url.pathname.replace(/\/+$/,'')||'/';if(publicAssetPath(path)||path==='/login'||path==='/api/session')return null;
- try{const s=await session(request,env);if(!s){if(path.startsWith('/api/')||request.headers.has('RSC'))return json({error:'请先登录'},401);return Response.redirect(new URL('/login',url),303);}
+ const url=new URL(request.url),path=localPath(url.pathname).replace(/\/+$/,'')||'/';if(publicAssetPath(path)||path==='/login'||path==='/api/session')return null;
+ try{const s=await session(request,env);if(!s){if(path.startsWith('/api/')||request.headers.has('RSC'))return json({error:'请先登录'},401);return Response.redirect(new URL(appPath('/login'),process.env.PUBLIC_ORIGIN||url),303);}
   if(s.user.role==='admin')return null;
   if((path==='/api/spot'||path==='/api/cme-iv')&&request.method==='GET')return null;
   if(path==='/api/client-display')return null;
-  if(path==='/'||path==='/client'){const config=await readDisplayConfig(database(env),'client');if(path==='/'?config.pages.workbench:config.pages.client)return null;const fallback=config.pages.client?'/client':'/';return Response.redirect(new URL(fallback,url),303);}
+  if(path==='/'||path==='/client'){const config=await readDisplayConfig(database(env),'client');if(path==='/'?config.pages.workbench:config.pages.client)return null;const fallback=config.pages.client?'/client':'/';return Response.redirect(new URL(appPath(fallback),process.env.PUBLIC_ORIGIN||url),303);}
   return path.startsWith('/api/')?json({error:'此功能仅限管理员'},403):new Response('此页面仅限管理员访问',{status:403,headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'}});
  }catch(error){return errorResponse(error);}
 }

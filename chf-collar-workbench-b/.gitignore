@@ -45,3 +45,10 @@ next-env.d.ts
 /.codex/
 /outputs/
 /work/
+
+# Ubuntu runtime and private migration inputs
+*.sqlite
+*.sqlite-*
+*.db
+*.tsbuildinfo
+/private-migration/
