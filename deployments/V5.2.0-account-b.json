@@ -24,8 +24,13 @@
     "client_profile": "awaiting_original_export",
     "admin_profile": "awaiting_original_export",
     "client_password_hash": "existing_local_copy; production match not verified",
-    "admin_password_hash": "private bootstrap active; restore final local hash before handoff",
-    "session_secret": "new"
+    "admin_password_hash": "existing_local_copy restored; production match not verified",
+    "session_secret": "new",
+    "temporary_bootstrap_admin": "disabled; session logged out"
   },
-  "customer_launch": "not_yet; owner-private"
+  "customer_launch": "not_yet; owner-private",
+  "latest_deployment_id": "appgdep_6aeac704a9d88191b7138e05aaef9816",
+  "latest_deployment_status": "succeeded",
+  "latest_environment_revision": 2,
+  "github_source_commit": "b333cdead4a7ef21ee11539d6ccde7307700b610"
 }

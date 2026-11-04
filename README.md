@@ -6,7 +6,7 @@
 - B 新站：https://chf-collar-lab-b.pearlywillow.chatgpt.site 。初次部署成功，目前仅 owner 访问，原站发布配置正在等待导出；尚未完成客户切换。
 - B Sites 项目：`appgprj_6aeac30f0f84819195b6664223b76f0c`，独立 DB。
 - 已部署源码提交：`6aa6ae5f4d3d203d9e2a06fac32788ca98fd397f`，源码目录树：`20c647ade75bc104a155664ee61784f32766edc7`；与本仓库 B 源码目录逐文件一致。
-- 初始部署 ID：`appgdep_6aeac4e55e948191a68fc5fe00daa9c2`；最新状态见 [`deployments/V5.2.0-account-b.json`](deployments/V5.2.0-account-b.json)。
+- 最新部署 ID：`appgdep_6aeac704a9d88191b7138e05aaef9816`（正式本地登录哈希、环境修订2；初始私有部署记录另存）；最新状态见 [`deployments/V5.2.0-account-b.json`](deployments/V5.2.0-account-b.json)。
 
 ## 开发
 

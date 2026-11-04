@@ -18,10 +18,11 @@
   "sites": {
     "project_id": "appgprj_6aeac30f0f84819195b6664223b76f0c",
     "saved_version_id": "appgprj_6aeac30f0f84819195b6664223b76f0c~appgver_47c4d188a7d48191b19a2f8a715e80c2",
-    "deployment_id": "appgdep_6aeac4e55e948191a68fc5fe00daa9c2",
+    "deployment_id": "appgdep_6aeac704a9d88191b7138e05aaef9816",
     "url": "https://chf-collar-lab-b.pearlywillow.chatgpt.site",
     "status": "succeeded_owner_private",
-    "original_profiles": "awaiting_export"
+    "original_profiles": "awaiting_export",
+    "environment_revision": 2
   },
   "details": "deployments/V5.2.0-account-b.json"
 }
