@@ -3,7 +3,10 @@
   "source_commit": "1283338c4c71d495b87384744cf1a39f71feeef5",
   "source_tree": "bfe11a69e757183679c60422b8ac1d79addee098",
   "github_account": "biubiubeast",
+  "github_status": "source_synchronized",
+  "github_source_commit": "237a91e7fb18a8a76df9d6d570d526201ec557a4",
   "source_directory": "chf-collar-workbench",
+  "local_handoff_commit": "9b2055a",
   "validated_on": "2026-11-04",
   "checks": {
     "regression_pass_records": 336,

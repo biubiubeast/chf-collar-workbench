@@ -266,4 +266,6 @@ PNL 图的盈亏平衡、追平本金存款、汇率不变三个点保留标记�
 
 Excel 汇总、收益模型、历史窗口、模拟路径及年化收益率已统一使用原本金加净期权支出正值的分母，内扣与外付模式均不包含借款。收益边界金额和百分比追加到汇总表，不移动原有公式引用。回归包含不使用缓存值的分母依赖计算、借款/保证金隔离、净支出/净收款/零成本、OTC/CME 及尾部数量调整。
 
-本地交付与远程发布分开记录，详见 `releases/V5.2.0.md`。B 当前读取原 Sites 项目返回 NOT_FOUND；GitHub 插件尚待安装或连接。访问恢复前可以继续本地开发，不创建替代站点，也不修改 `.openai/hosting.json` 的项目 ID。账号与授权接续流程见 `MIGRATION-TO-ACCOUNT-B.md`。
+本地交付与远程发布分开记录，详见 `releases/V5.2.0.md`。B 的 GitHub 已验证为 `biubiubeast`，具有私有仓库管理和写入权限；V5.2.0 完整源码已同步至仓库的 `chf-collar-workbench/` 目录，源码提交为 `237a91e7fb18a8a76df9d6d570d526201ec557a4`。原 V4.4 压缩交付包仍保留在仓库根目录。此本地 checkout 与 GitHub 根目录布局不同，不可直接覆盖推送；从 GitHub 接续时 clone 仓库后打开源码子目录。
+
+B 当前读取原 Sites 项目仍返回 NOT_FOUND，尚无 V5.2.0 部署 ID。可以继续本地开发；不创建替代站点、不修改 `.openai/hosting.json` 的项目 ID。账号与授权接续流程见 `MIGRATION-TO-ACCOUNT-B.md`。

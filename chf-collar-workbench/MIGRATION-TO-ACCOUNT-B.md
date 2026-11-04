@@ -19,7 +19,8 @@ ChatGPT 不支持合并两个账号，也不能把 A 的聊天直接变成 B 侧
 - Sites 项目：`.openai/hosting.json` 中的项目 ID `appgprj_6ac26409050481919f506a1082bb74e7`，数据库绑定名为 `DB`。
 - V5.1.0 的已保存 Sites 版本和部署 ID 记录在 `releases/V5.1.0.md`，可用于回溯。
 - 本地源码已经包含 V5.2.0 更新；V5.2.0 尚无线上部署 ID。最近检查时线上客户页仍显示 V5.1。
-- V5.2.0 源码通过本地提交和版本标签固定，具体提交以 git log / git tag 为准；当前 checkout 尚无 Git remote。换账号不会丢失本机目录，但若要在别的电脑接手，必须先完整备份/复制代码和 `.git`。
+- V5.2.0 发布源码固定于本地提交 `1283338c4c71d495b87384744cf1a39f71feeef5` / 标签 `v5.2.0`；已同步到私有 GitHub 仓库 `biubiubeast/chf-collar-workbench`，源码提交 `237a91e7fb18a8a76df9d6d570d526201ec557a4`，应用位于仓库的 `chf-collar-workbench/` 子目录。后续交接文档提交不会移动发布标签。
+- 当前本地 checkout 尚无 Git remote，根目录布局与 GitHub 不同；不要直接把本地根目录覆盖推送至 GitHub。换电脑可 clone GitHub 后打开源码子目录，或使用本地完整 Git bundle 恢复发布历史。
 - 验证结果与远程发布状态统一见 releases/V5.2.0.md；构建通过不代表已在线部署。
 
 ## 产品逻辑速览
@@ -57,7 +58,7 @@ Pro 订阅不在账号之间转移；B 已经开通 Pro，可以直接用 B。A 
 - `releases/` 中的 V5.1.0 与 V5.2.0 记录
 - `.openai/hosting.json`（项目 ID，不含登录凭据）
 - 所有源码、迁移脚本、测试和 `package.json` / `pnpm-lock.yaml`
-- `.git` 和当前工作区的未提交 V5.2.0 改动
+- `.git`、已提交的 V5.2.0 发布及后续交接记录
 - 单独保留 Q&A 文档：`docs/CHF-Collar-Lab-V5.2.0-QA.docx`
 
 不要把 `.dev.vars`、`.env`、API 密钥、令牌、浏览器登录资料或 `.wrangler/state` 提交到 GitHub，也不要把它们上传给新账号的聊天。`node_modules` 和 `dist` 可在 B 侧重新安装/构建。Sites 项目绑定的线上 D1 数据不是源代码的一部分；若要新建 Sites 项目，需另行核对并迁移发布配置和业务数据。
@@ -89,13 +90,15 @@ Pro 订阅不在账号之间转移；B 已经开通 Pro，可以直接用 B。A 
 
 ChatGPT/Codex 账号 B 和 GitHub 账号是两套身份。B 需要在 Codex 的 GitHub 连接流程中用 OAuth 授权，并且这个 GitHub 身份必须能访问目标私有仓库。若使用另一个 GitHub 用户，就由仓库管理员在 GitHub 给该用户仓库访问权限；无需、也不应把 GitHub 密码发给 Codex。
 
-当前本地 checkout 没有 `origin` remote，因此先在 GitHub 网站确认 `biubiubeast/chf-collar-workbench` 是否确实存在且 B 获准访问，再配置 remote。推送前先检查 `git status` 和 `.gitignore`，将 V5.2.0 修改、版本记录和交接文件纳入版本控制；排除密钥、客户配置和本地产物。GitHub 提交**不会自动发布 Sites**。
+已在 2026-11-04 验证 B 的 GitHub 连接：账户 `biubiubeast`，仓库为私有，具有 admin / push 权限；V5.2.0 源码已写入主分支并读回核对。仓库根目录保留 V4.4 压缩包，当前应用源码位于 `chf-collar-workbench/`。后续从 GitHub 接续时 clone 仓库并打开该子目录；先读根目录 AGENTS 和应用 AGENTS。
 
-如果该仓库尚未创建，应由有权访问 GitHub 的用户新建私有仓库，再由账号 B 的 GitHub OAuth 连接授权该仓库。不要在聊天、代码、`.env` 或终端输出中记录密码、PAT 或 OAuth token。
+本地旧 checkout 没有 `origin` remote，且根目录布局与远端不同，不能直接推送覆盖。GitHub 插件授权可用于读写仓库，但不会自动给终端 Git 配置凭据。无需向 Codex提供账户密码；终端推送如确有需要，另走 GitHub 官方登录授权。GitHub 提交**不会自动发布 Sites**。
 
 ### 6. 在账号 B 恢复 Sites 发布权限
 
-Sites 和 GitHub 是分开的授权。要继续使用原线上项目，账号 B 必须能访问/接管 `.openai/hosting.json` 指定的 Sites 项目；仅有项目 ID 或 GitHub 源码并不等于有发布权。先用账号 A 的项目所有者权限查看 Sites 产品是否支持邀请 B、转移项目所有权，或由 A 授权 B 的连接器访问。若平台不支持转移，则需由 A 在原项目下发布，或由 B 创建新项目后明确迁移 D1 数据、原访问设置、域名和配置。
+Sites 和 GitHub 是分开的授权。要继续使用原线上项目，账号 B 必须能访问/接管 `.openai/hosting.json` 指定的 Sites 项目；仅有项目 ID 或 GitHub 源码并不等于有发布权。官方文档规定编辑协作要求双方为同一工作区的活跃成员；跨工作区/个人账号的外部邀请只授予 Viewer，不能编辑或发布。不能把 A 邀请 B 查看当作发布权限恢复。若不能在同一工作区授予编辑权限，应由 A 发布或请求官方支持确认可用的项目转移方式；新建项目和迁移 D1、域名必须另行确认。
+
+A 已降为 Free：官方文档未明确保证降级后仍能编辑/发布已有 Sites，不要仅凭旧 Pro 身份推断。请在独立浏览器资料或隐身窗口登录 A（gpt4both@gmail.com），打开 https://chatgpt.com/sites，找到 CHF Collar Lab，点击站点或 More actions → Settings。桌面端也可从 Sites 入口打开。若能打开项目，先核对项目 ID、所有者和发布控件；若显示升级提示或入口不可用，记录具体提示，再询问官方支持，无需先盲目续费。
 
 对原项目保持：
 
@@ -139,10 +142,12 @@ Sites 和 GitHub 是分开的授权。要继续使用原线上项目，账号 B 
 
 - 本地代码和当前 Codex 开发聊天可读。原 ChatGPT 对话不能在 B 下直接读取时，使用本项目产品文档和导出的聊天文件作参考。
 - B 的 Sites 工具已可调用，但读取原项目返回 `NOT_FOUND / project_not_found`。这是访问未验证，不表示网站被删除；保持原 project_id。
-- B 的 GitHub 插件未安装/连接，已提供授权入口。请在 B 安装或连接 GitHub，通过官方 OAuth 授权 `biubiubeast/chf-collar-workbench`；只读网页可访问也不等于可写。
-- 在 A 的原 Sites 项目分享界面检查是否支持给 B **编辑者**权限。仅外部访客/查看权限不足以同步源码和发布。当前工具仅支持同工作区编辑者授权，不能保证两个个人账号可直接转移项目。若面板不支持，应让 A 继续发布或由支持人员协助确认转移方式。用户未另行确认前不创建新项目、不更换域名、不迁移或清空 D1。
+- B 的 GitHub 插件已连接：`biubiubeast`；私有仓库管理/写入权限及实际主分支写入均已验证。V5.2.0 源码提交为 `237a91e7fb18a8a76df9d6d570d526201ec557a4`。
+- Sites 官方规则：同工作区成员可由 owner 在 Share → Can view → Can edit 授予编辑权限；跨个人账号邀请为 Viewer，不能发布。A/B 如不在同一工作区，应由 A 继续发布或由支持人员协助确认转移方式。用户未另行确认前不创建新项目、不更换域名、不迁移或清空 D1。
 - 原站点不是仅靠 `.openai/hosting.json` 或源代码就能接管。B 恢复授权后先 `get_site`，核实 owner/editor 与当前受众，再领取同项目源码仓库凭据，按 Sites 工作流同步并发布。
 
 给 A 的项目管理对话可粘贴：
 
-> 我需要让我的账号 B（BiuBiuSniper）继续维护 CHF Collar Lab。请读取原项目 appgprj_6ac26409050481919f506a1082bb74e7 的实际权限，检查是否能为 B 添加编辑者（非仅查看者）。保持网站现有受众、网址、DB 与站内登录机制。请先核实 B 的准确身份和支持的共享方式；若跨个人账号不支持编辑共享，请明确说明，勿新建替代站点或重置数据库。
+> 我需要继续发布 CHF Collar Lab V5.2.0。GitHub 私有仓库 biubiubeast/chf-collar-workbench 的 chf-collar-workbench/ 目录已包含发布源码，提交 237a91e7fb18a8a76df9d6d570d526201ec557a4。请先读取原 Sites 项目 appgprj_6ac26409050481919f506a1082bb74e7 的实际权限和当前受众，确认 A 的现有套餐是否允许更新。如允许，按 Sites 工作流同步已验证源码、保存版本、发布并记录实际部署 ID。保持网址、DB 和站内登录机制。若 B 不在同一工作区，不要把外部查看邀请当作编辑权限；如需新建替代站点或迁移数据库，先停止并说明。
+
+Sites 操作依据：[管理站点](https://learn.chatgpt.com/docs/sites/managing-a-site)、[发布与共享／编辑协作](https://learn.chatgpt.com/docs/sites/publishing-and-sharing)、[套餐与功能可用性](https://learn.chatgpt.com/docs/pricing)。以上权限结论核对日期为 2026-11-04。
