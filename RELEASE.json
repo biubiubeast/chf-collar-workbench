@@ -1,23 +1,27 @@
 {
   "version": "V5.2.0",
-  "source_commit": "1283338c4c71d495b87384744cf1a39f71feeef5",
-  "source_tree": "bfe11a69e757183679c60422b8ac1d79addee098",
-  "github_account": "biubiubeast",
-  "github_status": "source_synchronized",
-  "github_source_commit": "237a91e7fb18a8a76df9d6d570d526201ec557a4",
-  "source_directory": "chf-collar-workbench",
-  "local_handoff_commit": "9b2055a",
-  "validated_on": "2026-11-04",
-  "checks": {
+  "active_source_directory": "chf-collar-workbench-b",
+  "source_commit": "6aa6ae5f4d3d203d9e2a06fac32788ca98fd397f",
+  "source_tree": "20c647ade75bc104a155664ee61784f32766edc7",
+  "account": "B / BiuBiuSniper",
+  "original_release": {
+    "local_commit": "1283338c4c71d495b87384744cf1a39f71feeef5",
+    "tag": "v5.2.0",
+    "source_directory": "chf-collar-workbench"
+  },
+  "validation": {
+    "date": "2026-11-04",
     "regression_pass_records": 336,
     "typecheck": "passed",
-    "production_build": "passed",
-    "local_http": "passed"
+    "production_build": "passed"
   },
   "sites": {
-    "project_id": "appgprj_6ac26409050481919f506a1082bb74e7",
-    "status": "awaiting_project_access",
-    "saved_version_id": null,
-    "deployment_id": null
-  }
+    "project_id": "appgprj_6aeac30f0f84819195b6664223b76f0c",
+    "saved_version_id": "appgprj_6aeac30f0f84819195b6664223b76f0c~appgver_47c4d188a7d48191b19a2f8a715e80c2",
+    "deployment_id": "appgdep_6aeac4e55e948191a68fc5fe00daa9c2",
+    "url": "https://chf-collar-lab-b.pearlywillow.chatgpt.site",
+    "status": "succeeded_owner_private",
+    "original_profiles": "awaiting_export"
+  },
+  "details": "deployments/V5.2.0-account-b.json"
 }

@@ -1,0 +1,619 @@
+{
+  "asOf": "2026-10-04",
+  "retrievedAt": "2026-10-04T14:15:00Z",
+  "optionLabel": "CME priorSettle（接口日期 04 Oct 2026；非买卖盘）",
+  "futureDate": "2026-10-02",
+  "spotDate": "2026-10-02",
+  "spot": 1.2072920439454304,
+  "forward": 1.25885,
+  "expiry": "2027-09-03",
+  "year": 2027,
+  "month": 9,
+  "underlying": "6SU7",
+  "source": "snapshot",
+  "rows": [
+    {
+      "strike": 1.15,
+      "call": 0.106,
+      "put": 0.0056,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.16,
+      "call": 0.0976,
+      "put": 0.0068,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.17,
+      "call": 0.0894,
+      "put": 0.0082,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.18,
+      "call": 0.0815,
+      "put": 0.0099,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.19,
+      "call": 0.0738,
+      "put": 0.0118,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.2,
+      "call": 0.0665,
+      "put": 0.0141,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.205,
+      "call": 0.063,
+      "put": 0.0154,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.21,
+      "call": 0.0596,
+      "put": 0.0169,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.215,
+      "call": 0.0564,
+      "put": 0.0184,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.22,
+      "call": 0.0532,
+      "put": 0.02,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.225,
+      "call": 0.0502,
+      "put": 0.0218,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.23,
+      "call": 0.0472,
+      "put": 0.0237,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.235,
+      "call": 0.0445,
+      "put": 0.0257,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.24,
+      "call": 0.0418,
+      "put": 0.0278,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.245,
+      "call": 0.0393,
+      "put": 0.0301,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.25,
+      "call": 0.0369,
+      "put": 0.0325,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.255,
+      "call": 0.0346,
+      "put": 0.035,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.26,
+      "call": 0.0325,
+      "put": 0.0377,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.265,
+      "call": 0.0305,
+      "put": 0.0405,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.27,
+      "call": 0.0286,
+      "put": 0.0434,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.275,
+      "call": 0.0268,
+      "put": 0.0465,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.28,
+      "call": 0.0252,
+      "put": 0.0496,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.285,
+      "call": 0.0236,
+      "put": 0.0529,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.29,
+      "call": 0.0222,
+      "put": 0.0562,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.295,
+      "call": 0.0208,
+      "put": 0.0597,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.3,
+      "call": 0.0196,
+      "put": 0.0632,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.305,
+      "call": 0.0184,
+      "put": 0.0668,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.31,
+      "call": 0.0173,
+      "put": 0.0705,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.315,
+      "call": 0.0163,
+      "put": 0.0743,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.32,
+      "call": 0.0153,
+      "put": 0.0782,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.325,
+      "call": 0.0144,
+      "put": 0.0821,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.33,
+      "call": 0.0136,
+      "put": 0.086,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.335,
+      "call": 0.0128,
+      "put": 0.09,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.34,
+      "call": 0.0121,
+      "put": 0.0941,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.345,
+      "call": 0.0114,
+      "put": 0.0982,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.35,
+      "call": 0.0107,
+      "put": 0.1024,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.355,
+      "call": 0.0101,
+      "put": 0.1066,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.36,
+      "call": 0.0096,
+      "put": 0.1108,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.365,
+      "call": 0.009,
+      "put": 0.1151,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.37,
+      "call": 0.0085,
+      "put": 0.1194,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.375,
+      "call": 0.0081,
+      "put": 0.1237,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.38,
+      "call": 0.0076,
+      "put": 0.1281,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.385,
+      "call": 0.0072,
+      "put": 0.1325,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.39,
+      "call": 0.0068,
+      "put": 0.1369,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.395,
+      "call": 0.0064,
+      "put": 0.1413,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.4,
+      "call": 0.0061,
+      "put": 0.1457,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.405,
+      "call": 0.0057,
+      "put": 0.1502,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.41,
+      "call": 0.0054,
+      "put": 0.1547,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.415,
+      "call": 0.0051,
+      "put": 0.1592,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.42,
+      "call": 0.0049,
+      "put": 0.1637,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.425,
+      "call": 0.0046,
+      "put": 0.1683,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.43,
+      "call": 0.0044,
+      "put": 0.1728,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.435,
+      "call": 0.0041,
+      "put": 0.1774,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.44,
+      "call": 0.0039,
+      "put": 0.182,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.45,
+      "call": 0.0035,
+      "put": 0.1911,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.46,
+      "call": 0.0031,
+      "put": 0.2004,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.47,
+      "call": 0.0028,
+      "put": 0.2096,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    },
+    {
+      "strike": 1.48,
+      "call": 0.0025,
+      "put": 0.2189,
+      "volumeCall": 0,
+      "volumePut": 0,
+      "underlying": "6SU7"
+    }
+  ],
+  "calendar": [
+    {
+      "code": "CHUV26",
+      "label": "Oct 2026",
+      "expiry": "2026-10-09",
+      "firstTrade": "2025-10-06",
+      "year": 2026,
+      "month": 10
+    },
+    {
+      "code": "CHUX26",
+      "label": "Nov 2026",
+      "expiry": "2026-11-06",
+      "firstTrade": "2025-11-10",
+      "year": 2026,
+      "month": 11
+    },
+    {
+      "code": "CHUZ26",
+      "label": "Dec 2026",
+      "expiry": "2026-12-04",
+      "firstTrade": "2024-12-09",
+      "year": 2026,
+      "month": 12
+    },
+    {
+      "code": "CHUF27",
+      "label": "Jan 2027",
+      "expiry": "2027-01-08",
+      "firstTrade": "2026-01-12",
+      "year": 2027,
+      "month": 1
+    },
+    {
+      "code": "CHUG27",
+      "label": "Feb 2027",
+      "expiry": "2027-02-05",
+      "firstTrade": "2026-02-09",
+      "year": 2027,
+      "month": 2
+    },
+    {
+      "code": "CHUH27",
+      "label": "Mar 2027",
+      "expiry": "2027-03-05",
+      "firstTrade": "2025-03-10",
+      "year": 2027,
+      "month": 3
+    },
+    {
+      "code": "CHUJ27",
+      "label": "Apr 2027",
+      "expiry": "2027-04-09",
+      "firstTrade": "2026-04-06",
+      "year": 2027,
+      "month": 4
+    },
+    {
+      "code": "CHUK27",
+      "label": "May 2027",
+      "expiry": "2027-05-07",
+      "firstTrade": "2026-05-11",
+      "year": 2027,
+      "month": 5
+    },
+    {
+      "code": "CHUM27",
+      "label": "Jun 2027",
+      "expiry": "2027-06-04",
+      "firstTrade": "2025-06-09",
+      "year": 2027,
+      "month": 6
+    },
+    {
+      "code": "CHUN27",
+      "label": "Jul 2027",
+      "expiry": "2027-07-09",
+      "firstTrade": "2026-07-06",
+      "year": 2027,
+      "month": 7
+    },
+    {
+      "code": "CHUQ27",
+      "label": "Aug 2027",
+      "expiry": "2027-08-06",
+      "firstTrade": "2026-08-10",
+      "year": 2027,
+      "month": 8
+    },
+    {
+      "code": "CHUU27",
+      "label": "Sep 2027",
+      "expiry": "2027-09-03",
+      "firstTrade": "2025-09-08",
+      "year": 2027,
+      "month": 9
+    },
+    {
+      "code": "CHUV27",
+      "label": "Oct 2027",
+      "expiry": "2027-10-08",
+      "firstTrade": "2026-10-12",
+      "year": 2027,
+      "month": 10
+    },
+    {
+      "code": "CHUZ27",
+      "label": "Dec 2027",
+      "expiry": "2027-12-03",
+      "firstTrade": "2025-12-08",
+      "year": 2027,
+      "month": 12
+    },
+    {
+      "code": "CHUH28",
+      "label": "Mar 2028",
+      "expiry": "2028-03-03",
+      "firstTrade": "2026-03-09",
+      "year": 2028,
+      "month": 3
+    },
+    {
+      "code": "CHUM28",
+      "label": "Jun 2028",
+      "expiry": "2028-06-09",
+      "firstTrade": "2026-06-08",
+      "year": 2028,
+      "month": 6
+    },
+    {
+      "code": "CHUU28",
+      "label": "Sep 2028",
+      "expiry": "2028-09-08",
+      "firstTrade": "2026-09-08",
+      "year": 2028,
+      "month": 9
+    }
+  ],
+  "notice": "保存的公开参考数据；尚未接入有授权的实时 bid/ask 和盘口深度。"
+}

@@ -1,37 +1,23 @@
-# CHF 领口对冲工作台 V5.2.0
+# CHF Collar Lab — V5.2.0
 
-最新可开发源码位于 [chf-collar-workbench/](chf-collar-workbench/)。直接打开该目录继续开发，无需先解压旧交付包。
+当前开发和部署项目由账号 B（BiuBiuSniper）独立维护。
 
-- 客户展示：https://chf-collar-lab.gpt4both.chatgpt.site/client
-- 已验证源提交：`1283338c4c71d495b87384744cf1a39f71feeef5`；本地标签：`v5.2.0`。
-- 源目录 Git tree：`bfe11a69e757183679c60422b8ac1d79addee098`；本次上传保留该目录的完整版本控制文件。
-- V5.2.0 已完成本地修复和验证，**尚未发布到 Sites**。B 读取原 Sites 项目仍返回 NOT_FOUND，不应将 GitHub 上传当成网站已更新。
+- **当前源码：[`chf-collar-workbench-b/`](chf-collar-workbench-b/)**。Codex clone 本仓库后打开这个子目录，先读其 AGENTS.md。
+- B 新站：https://chf-collar-lab-b.pearlywillow.chatgpt.site 。初次部署成功，目前仅 owner 访问，原站发布配置正在等待导出；尚未完成客户切换。
+- B Sites 项目：`appgprj_6aeac30f0f84819195b6664223b76f0c`，独立 DB。
+- 已部署源码提交：`6aa6ae5f4d3d203d9e2a06fac32788ca98fd397f`，源码目录树：`20c647ade75bc104a155664ee61784f32766edc7`；与本仓库 B 源码目录逐文件一致。
+- 初始部署 ID：`appgdep_6aeac4e55e948191a68fc5fe00daa9c2`；最新状态见 [`deployments/V5.2.0-account-b.json`](deployments/V5.2.0-account-b.json)。
 
-## 继续开发
+## 开发
 
-先读 [AGENTS.md](chf-collar-workbench/AGENTS.md)、[README.md](chf-collar-workbench/README.md) 和 [账号 B 交接资料](chf-collar-workbench/MIGRATION-TO-ACCOUNT-B.md)。
+Node >=22.13，pnpm 11.25.0。在 `chf-collar-workbench-b/` 执行 `pnpm install --frozen-lockfile`，再运行 `pnpm test`、`pnpm typecheck --incremental false`、`pnpm build`。
 
-```sh
-git clone https://github.com/biubiubeast/chf-collar-workbench.git
-cd chf-collar-workbench/chf-collar-workbench
-pnpm install --frozen-lockfile
-pnpm test
-pnpm typecheck --incremental false
-pnpm build
-```
+B 新站重新通过336条回归、类型检查和生产构建。线上已验证登录页200、匿名配置 API 401、临时管理员登录200、已登录客户页及两份配置接口200；浏览器交互仍待验收，原站业务配置尚未导入。GitHub 同步不自动发布 Sites。
 
-需要 Node >=22.13（建议24）和 pnpm 11.25.0。本地预览还需在该源码目录配置被 Git 忽略的 .dev.vars 和本地 D1；不要复制生产秘密到仓库或聊天。
+## 保留的旧项目与交付
 
-## V5.2.0
+- `chf-collar-workbench/`：原 A 项目源码及交接文档。原站 https://chf-collar-lab.gpt4both.chatgpt.site 保持不动；不要把其旧 project_id 写回 B 新站。
+- 根目录 zip/tar.gz、restore-source.sh、SHA256SUMS：历史 V4.4 交付包，不要覆盖恢复到当前源码。
+- V5.2.0 原始发布对应本地提交 `1283338c4c71d495b87384744cf1a39f71feeef5` / 标签 `v5.2.0`；B 的新提交保留该版本金融功能，另有新的部署身份和交接记录。
 
-页面、Excel 情景/历史/模拟路径/期望与有限边界收益率统一按原本金加净期权支出正值计算，分母不含借款。加入 OTC 精确尾部数量调整、CME 整手补足、图表范围解释与默认收起持平概率。重建方案会清除上一轮尾部数量覆盖值。
-
-完整回归包含 336 条 PASS 记录；类型检查和生产构建通过；本地登录页200、未登录客户页303、受保护API401。未在本次会话进行登录后的浏览器操作或原生 Excel 应用重算。
-
-## 版本与发布
-
-[发布说明](chf-collar-workbench/releases/V5.2.0.md) · [Q&A文档](chf-collar-workbench/docs/CHF-Collar-Lab-V5.2.0-QA.docx)
-
-源码目录中的发布状态文件保留源快照时的检查结果；仓库根部 RELEASE.json 记录此次 GitHub 同步身份和来源。没有新的 Sites saved-version/deployment ID。
-
-根目录已有的 source.zip、website.tar.gz、restore-source.sh 和 SHA256SUMS 是 V4.4 历史交付物。新开发使用上面的源码目录；旧恢复脚本遇到现有目录会停止。历史备份保持原样。
+密码哈希、会话密钥、源仓库短期凭据、客户配置备份不在 GitHub。运行时 Secrets 和 D1 数据需独立维护；原站两份发布配置及旧浏览器草稿的迁移步骤见项目交接文档。

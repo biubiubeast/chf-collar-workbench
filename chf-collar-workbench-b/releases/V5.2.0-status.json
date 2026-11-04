@@ -1,0 +1,36 @@
+{
+  "product_version": "V5.2.0",
+  "package_version": "0.5.2",
+  "source_tag": "v5.2.0",
+  "previous_commit": "28b3dc7c6b3f6bcbefe29bdb45ae40aed2371508",
+  "validated_on": "2026-11-04",
+  "timezone": "Asia/Hong_Kong",
+  "validation": {
+    "full_regression": "passed",
+    "pass_records": 336,
+    "typecheck": "passed",
+    "production_build": "passed",
+    "local_http": {"login": 200, "unauthenticated_client": 303, "unauthenticated_api": 401},
+    "browser_interaction": "not_verified",
+    "native_excel_recalculation": "not_verified"
+  },
+  "github": {
+    "status": "source_synchronized",
+    "push_confirmed": true,
+    "account": "biubiubeast",
+    "repository": "biubiubeast/chf-collar-workbench",
+    "source_directory": "chf-collar-workbench",
+    "source_commit": "237a91e7fb18a8a76df9d6d570d526201ec557a4",
+    "source_tree": "bfe11a69e757183679c60422b8ac1d79addee098",
+    "local_release_commit": "1283338c4c71d495b87384744cf1a39f71feeef5",
+    "verified_on": "2026-11-04"
+  },
+  "sites": {
+    "project_id": "appgprj_6ac26409050481919f506a1082bb74e7",
+    "status": "awaiting_project_access",
+    "last_access_error": "NOT_FOUND",
+    "saved_version_id": null,
+    "deployment_id": null,
+    "production_url": "https://chf-collar-lab.gpt4both.chatgpt.site"
+  }
+}

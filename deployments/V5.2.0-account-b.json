@@ -1,0 +1,31 @@
+{
+  "product_version": "V5.2.0",
+  "project_id": "appgprj_6aeac30f0f84819195b6664223b76f0c",
+  "owner_account": "B / BiuBiuSniper",
+  "source_commit": "6aa6ae5f4d3d203d9e2a06fac32788ca98fd397f",
+  "url": "https://chf-collar-lab-b.pearlywillow.chatgpt.site",
+  "initial_private_deployment_id": "appgdep_6aeac4e55e948191a68fc5fe00daa9c2",
+  "saved_version_id": "appgprj_6aeac30f0f84819195b6664223b76f0c~appgver_47c4d188a7d48191b19a2f8a715e80c2",
+  "initial_environment_revision": 1,
+  "initial_deployment_status": "succeeded",
+  "original_site_modified": false,
+  "validation": {
+    "regression_pass_records": 336,
+    "typecheck": "passed",
+    "production_build": "passed",
+    "online_login_page": 200,
+    "online_unauthenticated_api": 401,
+    "online_temporary_admin_login": 200,
+    "online_authenticated_client_page": 200,
+    "online_profile_apis": 200,
+    "browser_interaction": "not_verified"
+  },
+  "migration": {
+    "client_profile": "awaiting_original_export",
+    "admin_profile": "awaiting_original_export",
+    "client_password_hash": "existing_local_copy; production match not verified",
+    "admin_password_hash": "private bootstrap active; restore final local hash before handoff",
+    "session_secret": "new"
+  },
+  "customer_launch": "not_yet; owner-private"
+}

@@ -1,6 +1,7 @@
 # CHF Collar Lab repository
-The current editable application is in chf-collar-workbench/. Read its AGENTS.md and README.md before implementation.
-The repository root also retains historical V4.4 delivery archives; do not run restore-source.sh over the current source folder.
-Preserve the original Sites project ID, DB binding, current audience and application authentication.
-Never commit credentials, .env, .dev.vars, local runtime state or customer browser data.
-GitHub synchronization does not publish Sites. Account B currently lacks verified access to the original Sites project.
+
+The active app is `chf-collar-workbench-b/`, owned and deployed by account B. Open that directory and read its AGENTS.md, README.md and deployment records before editing.
+
+`chf-collar-workbench/` preserves the original A app. Keep the original Site and database unchanged. Never overwrite B's project id `appgprj_6aeac30f0f84819195b6664223b76f0c` with A's id. Root archives and restore-source.sh are V4.4 history, not current source.
+
+Use Sites skills to synchronize/publish the B app, preserve its live audience, and record actual deployment IDs. The initial B deployment is owner-private and original profiles await import; do not claim completed migration from empty defaults. Never commit credentials, exported client configurations or browser cookies. GitHub upload is separate from a Sites deployment.

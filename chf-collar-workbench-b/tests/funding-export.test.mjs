@@ -1,0 +1,22 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import {pathToFileURL} from 'node:url';
+import ts from 'typescript';
+import ExcelJS from 'exceljs';
+
+const dir=fs.mkdtempSync(path.resolve('.sites-runtime/test-export-'));
+const files=['finance','funding','formulas','global-bounds','cme-calendar','cme-roll','cme-expiry-policy','forward','strategy','option-greeks','cashflow-ledger','expiry-cases','case-workbook','excel-export'];
+for(const f of files){let js=ts.transpileModule(fs.readFileSync(`lib/${f}.ts`,'utf8'),{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ES2022,esModuleInterop:true}}).outputText;js=js.replace(/(['"])\.\/([\w-]+)\1/g,(_,q,n)=>`${q}./${n}.mjs${q}`);fs.writeFileSync(path.join(dir,f+'.mjs'),js);}
+const load=f=>import(pathToFileURL(path.join(dir,f+'.mjs'))),S=await load('strategy'),F=await load('funding'),L=await load('cashflow-ledger'),E=await load('excel-export');
+const market=JSON.parse(fs.readFileSync('lib/data/snapshot.json','utf8'));
+const base={...S.initialConfig,start:'2026-10-05',end:'2027-10-05',equity:2500000,spot:1.25,borrow:.01,loanSizing:'leverage',borrowMultiple:4};
+const near=(a,b)=>assert.ok(Math.abs(a-b)<1e-5,`${a} != ${b}`);
+let count=0;async function test(name,fn){await fn();console.log('PASS',name);count++;}
+await test('4x borrowing means $10m, CHF8m principal and CHF8.08m repayment',()=>{const c=F.resolveFunding(base),r=S.strategy(c,[],market);near(c.loan,8000000);near(r.n,8080000);near(F.fundingSummary(c,r.n).grossUSD,12500000);near(S.nominal(base),8080000);});
+await test('Equity and spot recalculate automatic borrowing; manual loans are preserved',()=>{near(F.resolveFunding({...base,equity:1000000,spot:1.2}).loan,4000000/1.2);near(F.resolveFunding({...base,loanSizing:'manual',loan:123}).loan,123);near(F.resolveFunding({...base,borrowMultiple:0}).loan,0);});
+await test('Invalid leverage/rates/dates reject safely; partial-year and custom interest match model',()=>{assert.throws(()=>S.strategy({...base,borrowMultiple:-1},[],market));assert.throws(()=>S.strategy({...base,borrow:NaN},[],market));assert.throws(()=>S.strategy({...base,end:base.start},[],market));const c={...base,end:'2027-04-05'},r=S.strategy(c,[],market,{growth:'pow(1+r,t)'});near(r.n,8000000*Math.pow(1.01,182/365));});
+await test('Chronological ledger reconciles across asset/loan, all option directions and expiry gaps',()=>{for(const mode of ['loan','asset'])for(const expiry of ['2027-09-03','2027-10-05','2027-12-03'])for(const scenario of [.7,1.25,2]){const c=F.resolveFunding({...base,mode,scenario}),legs=S.preset('collar',c).map(l=>({...l,expiry})),r=S.strategy(c,legs,market),rows=L.cashflowLedger(r);for(let i=1;i<rows.length;i++)assert.ok(rows[i].date>=rows[i-1].date);near(rows.at(-1).usdBalance,r.endEquity(scenario));near(rows.at(-1).chfBalance,0);assert.equal(rows[0].action,'注入自有美元本金');}});
+await test('Ledger handles additional USD funding, zero borrowing, negative interest and disabled legs',()=>{for(const patch of [{margin:20000000},{borrowMultiple:0},{borrow:-.005}]){const c=F.resolveFunding({...base,...patch}),legs=S.preset('collar',c);legs.push({...legs[0],id:'disabled',enabled:false});const r=S.strategy(c,legs,market),rows=L.cashflowLedger(r);near(rows.at(-1).usdBalance,r.endEquity(c.scenario));near(rows.at(-1).chfBalance,0);assert.ok(!rows.some(x=>x.action.includes('disabled')));}});
+await test('Real XLSX roundtrip preserves steps, typed amounts, dates, formulas and reconciliation',async()=>{const c=F.resolveFunding(base),r=S.strategy(c,S.preset('collar',c),market),wb=await E.createCashflowWorkbook(r,{spotInfo:'测试假设汇率 1.25，非市场报价',market,overrides:{}}),bytes=await wb.xlsx.writeBuffer(),read=new ExcelJS.Workbook();await read.xlsx.load(bytes);assert.equal(read.worksheets.length,6);const flow=read.getWorksheet('现金流步骤'),p=read.getWorksheet('参数与期权');near(p.getCell('B18').result,8080000);near(flow.getCell('A8').result,r.endEquity(c.scenario));assert.equal(flow.getCell('G10').formula,'E10');assert.ok(flow.getCell('B10').value instanceof Date);assert.equal(flow.getCell('E10').value,2500000);near(flow.getCell('G8').result,0);assert.equal(flow.views[0].ySplit,9);fs.mkdirSync('outputs/verification',{recursive:true});fs.writeFileSync('outputs/verification/CHF-cashflow-example.xlsx',bytes);});
+console.log(`${count} funding/export groups passed.`);fs.rmSync(dir,{recursive:true,force:true});
