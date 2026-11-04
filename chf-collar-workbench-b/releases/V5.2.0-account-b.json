@@ -1,6 +1,6 @@
 {
   "product_version": "V5.2.0",
-  "migration_status": "new_site_prepared_waiting_original_profiles",
+  "migration_status": "new_site_with_default_example; original_profile_import_pending",
   "account": "B / BiuBiuSniper",
   "project_id": "appgprj_6aeac30f0f84819195b6664223b76f0c",
   "expected_url": "https://chf-collar-lab-b.pearlywillow.chatgpt.site",
@@ -11,7 +11,7 @@
   "source_checkout_commit": "348ff9fdb944ca142f61b8341ac55919e7f94f15",
   "validation": {
     "regressions": "passed",
-    "pass_records": 336,
+    "pass_records": 339,
     "typecheck": "passed",
     "production_build": "pending"
   },
@@ -19,13 +19,14 @@
   "r2": null,
   "credentials": {
     "client_password_hash": "from_existing_local_ignored_secret_file; original-production match not yet verified",
-    "admin_password_hash": "temporary private bootstrap; restore existing local hash before customer launch",
-    "session_secret": "newly generated"
+    "admin_password_hash": "existing local hash restored; no credential changes in this repair",
+    "session_secret": "unchanged by this repair"
   },
   "configuration_import": {
     "client": "awaiting_original_export",
     "admin": "awaiting_original_export"
   },
   "saved_version_id": null,
-  "deployment_id": null
+  "deployment_id": null,
+  "fix": "Usable default presentation, explicit publication blockers, manual spot recovery and latest-quote timeout"
 }
