@@ -45,7 +45,7 @@ await test('Invalid roll assumptions fail explicitly and forced liquidation uses
 await test('XLSX roll events, case costs and formulas survive serialization without duplicate expiry settlement',async()=>{
  const r=S.strategy(c,S.preset('call',c),m),cases=[...X.defaultCases(c),{...X.defaultCases(c)[1],id:'mark',name:'滚仓后期前',mode:'mark',day:340,iv:.2}],wb=await E.createCashflowWorkbook(r,{spotInfo:'test',market:m,overrides:{},cases}),bytes=await wb.xlsx.writeBuffer(),read=new ExcelJS.Workbook();await read.xlsx.load(bytes);
  assert.equal(read.worksheets.length,7);for(const sh of read.worksheets.filter(s=>/^\d\d-/.test(s.name))){assert.equal(sh.getCell('K21').value.formula,'J21-G21-H21');assert.ok(sh.getCell('H21').value>0);assert.ok(sh.getCell('I21').value!==0);assert.ok(JSON.stringify(sh.model).includes('2027-08-27'));assert.ok(JSON.stringify(sh.model).includes('CHUV27'));}
- fs.writeFileSync('/private/tmp/chf-cme-roll-example.xlsx',bytes);
+ fs.writeFileSync(path.join(dir,'chf-cme-roll-example.xlsx'),bytes);
  const p=r.rolls[0];console.log('Illustrative current-input roll',JSON.stringify({equity:c.equity,spot:c.spot,lots:p.next.lots,K:p.next.strike,IV:p.newIV,oldClose:p.oldClose,newPremium:p.newPremium,fees:p.closeFee+p.openFee,netCost:p.newPremium-p.oldClose+p.closeFee+p.openFee,financing:r.groups[0].financing,newExpiry:p.newExpiry,pnlLow:r.pnl(c.spot*.1),pnlMid:r.pnl(c.spot),pnlHigh:r.pnl(c.spot*3)}));
 });
 console.log(`${count} CME roll validation groups passed.`);

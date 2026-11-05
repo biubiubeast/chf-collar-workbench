@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 umask 077
+export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 SOURCE_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd)"
 REPO_DIR="$(git -C "$SOURCE_DIR" rev-parse --show-toplevel)"
@@ -26,9 +27,6 @@ corepack pnpm test
 corepack pnpm typecheck --incremental false
 NEXT_PUBLIC_BASE_PATH=/FXCollar NEXT_TELEMETRY_DISABLED=1 corepack pnpm build:ubuntu
 cp -a .next/standalone "$RELEASE/app"
-mkdir -p "$RELEASE/app/.next"
-cp -a .next/static "$RELEASE/app/.next/static"
-cp -a public "$RELEASE/app/public"
 cp -a ubuntu "$RELEASE/ubuntu"
 printf '%s\n' "$COMMIT" > "$RELEASE/COMMIT"
 # Imports are explicit and only into an empty target. Secrets/configurations are
