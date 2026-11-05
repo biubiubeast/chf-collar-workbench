@@ -7,5 +7,6 @@ const html=await login.text(),asset=html.match(/(?:src|href)="(\/FXCollar\/_next
 assert.ok(asset,'prefixed build assets');const js=await fetch(origin+asset[1],{signal:AbortSignal.timeout(8000)});assert.equal(js.status,200,'asset');assert.match(js.headers.get('content-type')||'',/javascript|css/,'asset type');
 assert.equal((await get('/api/market')).status,401,'anonymous API');
 assert.equal((await get('/client')).status,303,'anonymous client');
+assert.equal((await get('/')).status,303,'root prefix has no trailing-slash loop');
 assert.equal((await get('/CHF-Collar-Lab-V2-Manual.docx')).status,303,'private manual');
 console.log('PASS login, prefixed assets, anonymous API, client and private-file protection');
