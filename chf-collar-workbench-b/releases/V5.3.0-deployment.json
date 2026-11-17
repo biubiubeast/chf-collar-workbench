@@ -1,0 +1,22 @@
+{
+  "product_version": "V5.3.0",
+  "account": "B / BiuBiuSniper",
+  "project_id": "appgprj_6aeac30f0f84819195b6664223b76f0c",
+  "source_commit_sha": "e19a04e8ee5d6d7b85a7f00a74ae6cce6692c034",
+  "previous_source_commit_sha": "beb836d97ae21ac8b88dba778af2b1f3e708c7b8",
+  "version_id": "appgprj_6aeac30f0f84819195b6664223b76f0c~appgver_7621cf4568108191b7b8eed921c7adc4",
+  "site_version_number": 3,
+  "deployment_id": "appgdep_6afbe25cdb788191a38a738ea4caaf3f",
+  "status": "succeeded",
+  "url": "https://chf-collar-lab-b.pearlywillow.chatgpt.site",
+  "deployed_at": "2026-11-17T05:13:09.527042+00:00",
+  "validation": {
+    "regression_pass_records": 342,
+    "typecheck": "passed",
+    "production_build": "passed",
+    "browser": "local isolated UI verified; live market API not verified"
+  },
+  "audience": "owner-only; unchanged",
+  "database": "Existing DB and credentials preserved; no migration or seed executed in production",
+  "original_site_modified": false
+}
