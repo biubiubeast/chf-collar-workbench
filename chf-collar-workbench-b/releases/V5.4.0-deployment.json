@@ -1,0 +1,25 @@
+{
+  "product_version": "V5.4.0",
+  "account": "B / BiuBiuSniper",
+  "project_id": "appgprj_6aeac30f0f84819195b6664223b76f0c",
+  "source_commit_sha": "59fca68ac8e52c42386aefa9febdba289a6ee036",
+  "previous_source_commit_sha": "e19a04e8ee5d6d7b85a7f00a74ae6cce6692c034",
+  "version_id": "appgprj_6aeac30f0f84819195b6664223b76f0c~appgver_39713e5c145c81919681c59343d1f695",
+  "site_version_number": 4,
+  "deployment_id": "appgdep_6afbfb4565008191b1d3e00234e05061",
+  "status": "succeeded",
+  "url": "https://chf-collar-lab-b.pearlywillow.chatgpt.site",
+  "deployed_at": "2026-11-17T06:59:25.069857+00:00",
+  "validation": {
+    "regression_pass_records": 344,
+    "typecheck": "passed",
+    "production_build": "passed",
+    "browser": "isolated client/admin flow, inclusive counts, linked amounts and 1100px/390px layout passed",
+    "download": "Actual browser XLSX read and checked: both legs CHF 5,000,000; inclusive profit formula verified"
+  },
+  "display_schema": 6,
+  "migration": "Older display profiles default Excel and probability sections hidden; V6 explicit choices persist",
+  "database": "No direct production DB mutation; financial scenes and account credentials preserved",
+  "audience": "owner-only; unchanged",
+  "original_site_modified": false
+}

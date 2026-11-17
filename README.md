@@ -1,29 +1,31 @@
-# CHF Collar Lab — V5.2.0
+# CHF Collar Lab — V5.4.0 Ubuntu deployment
 
-当前开发和部署项目由账号 B（BiuBiuSniper）独立维护。
+当前应用源码为 `chf-collar-workbench-b/`。本分支 `deploy/ubuntu-fxcollar` 将 `main` 的 V5.4.0 功能与 Ubuntu 部署适配合并，使用 Next.js 和 SQLite。
 
-- **当前源码：[`chf-collar-workbench-b/`](chf-collar-workbench-b/)**。Codex clone 本仓库后打开这个子目录，先读其 AGENTS.md。
-- B 新站：https://chf-collar-lab-b.pearlywillow.chatgpt.site 。初次部署成功，目前仅 owner 访问，原站发布配置正在等待导出；尚未完成客户切换。
-- B Sites 项目：`appgprj_6aeac30f0f84819195b6664223b76f0c`，独立 DB。
-- 已部署源码提交：`beb836d97ae21ac8b88dba778af2b1f3e708c7b8`，源码目录树：`901d8d8899c65285d78b12c9432a4cd61de66c00`；与本仓库 B 源码目录逐文件一致。
-- 最新部署 ID：`appgdep_6aeafbd302f48191a2b1ae8b39252537`（正式本地登录哈希、环境修订2；初始私有部署记录另存）；最新状态见 [`deployments/V5.2.0-account-b.json`](deployments/V5.2.0-account-b.json)。
+## 目录
 
-## 开发
+- `chf-collar-workbench-b/`：当前应用、测试与 Ubuntu 更新脚本。
+- `oldversion-chf-collar-workbench/`：原 A 版完整源码，原名 `chf-collar-workbench/`，作为历史档案保留。
+- 根目录压缩包与恢复脚本：历史交付包。
 
-Node >=22.13，pnpm 11.25.0。在 `chf-collar-workbench-b/` 执行 `pnpm install --frozen-lockfile`，再运行 `pnpm test`、`pnpm typecheck --incremental false`、`pnpm build`。
+仓库外层名称和当前 B 应用目录沿用原名。旧 A 版目录改名不会改变更新命令。
 
-B 新站重新通过339条回归、类型检查和生产构建。线上已验证登录页200、匿名配置 API 401、临时管理员登录200、已登录客户页及两份配置接口200；浏览器交互仍待验收，原站业务配置尚未导入。GitHub 同步不自动发布 Sites。
+## 更新
 
-## 保留的旧项目与交付
+新功能若先提交到 `main`，先合入 `deploy/ubuntu-fxcollar`，保留 URL 前缀、SQLite、登录保护和 Ubuntu 构建设置。通过回归、类型检查、生产构建及 Ubuntu 集成测试后，再发布部署分支。
 
-- `chf-collar-workbench/`：原 A 项目源码及交接文档。原站 https://chf-collar-lab.gpt4both.chatgpt.site 保持不动；不要把其旧 project_id 写回 B 新站。
-- 根目录 zip/tar.gz、restore-source.sh、SHA256SUMS：历史 V4.4 交付包，不要覆盖恢复到当前源码。
-- V5.2.0 原始发布对应本地提交 `1283338c4c71d495b87384744cf1a39f71feeef5` / 标签 `v5.2.0`；B 的新提交保留该版本金融功能，另有新的部署身份和交接记录。
+在服务器的仓库根目录执行：
 
-密码哈希、会话密钥、源仓库短期凭据、客户配置备份不在 GitHub。运行时 Secrets 和 D1 数据需独立维护；原站两份发布配置及旧浏览器草稿的迁移步骤见项目交接文档。
+```sh
+cd chf-collar-workbench-b && bash ubuntu/deploy.sh
+```
 
-## 默认演示方案与发布修复
+更新脚本只拉取 `deploy/ubuntu-fxcollar`，并沿用服务器已有账号配置和展示数据库。首次配置与旧方案导入用于首次安装，普通更新无需重复执行。
 
-2026-11-04 更新：新站没有发布方案时提供标注清楚的默认 OTC 示例，客户可直接查看；已有发布方案优先。管理员可使用默认示例直接发布，或从工作台载入。发布按钮显示禁用原因；最新汇率12秒超时后可重试或明确使用手动起点。读取默认方案不写入 D1，管理员发布后才保存。原站配置导入仍单独等待导出文件。
+## V5.4.0
 
-源码中的 releases/V5.2.0-account-b.json 是部署准备快照；最新线上状态以本仓库根目录 deployments/V5.2.0-account-b.json 为准。
+详见 [版本说明](chf-collar-workbench-b/releases/V5.4.0.md)。本版包含实际 CHF 名义金额编辑、双向联动和含持平概率展示。
+
+旧显示配置读取时，下载及概率模块默认隐藏，原财务方案保留。管理员可在展示管理中重新开启并发布。显示配置迁移仅在读取时处理，保存发布方案需要管理员明确操作。
+
+既有 Sites 发布记录用于历史回溯，不能作为 Ubuntu 服务器当前版本的证明。

@@ -6,7 +6,7 @@ export const presentationModels=[...probabilityModels,{id:'fhs',name:'P · 波�
 export type PresentationModel=typeof presentationModels[number]['id'];
 export const presentationModelGuides:Record<PresentationModel,{short:string;why:string;method:string}>={
  physical:{short:'输入假设',why:'先设定趋势与波动，观察这些假设会带来什么结果。',method:'P 对数正态：用输入的年化漂移 μ 和波动 σ 构造目标日汇率分布。参数是可调整的假设，默认值不是实测胜率。'},
- historical:{short:'历史一年涨跌直接计数法',why:'用全部历史同期限涨跌构成分布，再统计指定事件的窗口数占比。',method:'从不晚于策略开始日的真实历史，提取与策略相同日历天数的全部滚动窗口。一年期通常为365或366天；其他期限按实际天数，不把一年概率当成其他期限概率。终点取目标日或其后首个可用观察日，最多顺延7天。每个窗口的涨跌R=S结束/S开始−1，代入当前S₀得到情景S=S₀×(1+R)；事件频率=满足事件的窗口数/全部有效窗口数。所选汇率对应r=S_T/S₀−1；低于、等于、高于分别统计R<r、R=r、R>r，严格相等不加入附近区间或容差；柱形另统计每个区间的频率。整个组合仍用全部窗口逐个计算完整PNL后统计盈利及期望收益，不随当前查询阈值改变；不使用随机种子、区块长度或模拟路径数。重叠窗口不是独立年份，历史频率不是未来胜率。'},
+ historical:{short:'历史一年涨跌直接计数法',why:'用全部历史同期限涨跌构成分布，再统计指定事件的窗口数占比。',method:'从不晚于策略开始日的真实历史，提取与策略相同日历天数的全部滚动窗口。一年期通常为365或366天；其他期限按实际天数，不把一年概率当成其他期限概率。终点取目标日或其后首个可用观察日，最多顺延7天。每个窗口的涨跌R=S结束/S开始−1，代入当前S₀得到情景S=S₀×(1+R)；事件频率=满足事件的窗口数/全部有效窗口数。所选汇率对应r=S_T/S₀−1；低于等于统计R≤r，高于统计R>r；相等样本仅计入低于等于侧，不加入附近区间或容差；柱形另统计每个区间的频率。整个组合仍用全部窗口逐个计算完整PNL后统计盈利及期望收益，不随当前查询阈值改变；不使用随机种子、区块长度或模拟路径数。重叠窗口不是独立年份，历史频率不是未来胜率。'},
  bootstrap:{short:'历史区块重采样',why:'用过去连续几天的涨跌片段，拼出很多条假设路径。',method:'P 平稳区块重采样：保留几何区块内的历史顺序，按 252 个交易日/年模拟。保留历史平均收益；路径数量与随机种子只控制模拟精度，不证明未来概率准确。'},
  fhs:{short:'按样本末日波动调整历史',why:'借用历史冲击的形状，再按所选历史末日的波动大小缩放。',method:'P 的 FHS 敏感性模型：历史对数收益先去均值；EWMA λ=0.94 估计每日条件波动。标准化残差再去均值并调整至单位方差，带种子重采样；模拟中继续更新每日 EWMA 方差。252 个交易日/年、零对数漂移。波动来自所选真实历史末日，不等于当前实时报价或期权 IV。本工具采用透明的 EWMA 版本，未拟合原始研究中的完整 GARCH 模型。'},
  neutral:{short:'期权定价参考（Q）',why:'了解期权市场定价假设给不同汇率区域多少权重。',method:'Q 风险中性测度：以工作台远期和手动平坦 IV 构造对数正态分布。当前没有完整期权微笑校准；Q 的区域权重不能称作现实发生频率或客户胜率。'},
@@ -69,3 +69,6 @@ export function historicalDirectCounts(samples:readonly number[],threshold:numbe
  let below=0,equal=0,above=0;for(const s of samples){if(s<threshold)below++;else if(s>threshold)above++;else equal++;}
  return{total:samples.length,below,equal,above,atLeast:above+equal,atMost:below+equal};
 }
+
+/** Presentation categories include the equality mass exactly once. */
+export function inclusivePresentationOutcome(p:{better:number;equal:number;worse:number;unresolved:number}){return{...p,better:p.better+p.equal,equal:0};}
