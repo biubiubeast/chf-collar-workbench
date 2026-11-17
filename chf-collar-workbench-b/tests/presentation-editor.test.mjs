@@ -27,4 +27,29 @@ try{
   const legacy=structuredClone(cfg);for(const key of ['internalFunding','boundaryDetails','walkthrough'])delete legacy.controls[key];const migrated=D.validateDisplayConfig(legacy,audience);for(const key of ['internalFunding','boundaryDetails','walkthrough']){assert.equal(migrated.controls[key],false);migrated.controls[key]=true;}assert.deepEqual(D.validateDisplayConfig(migrated,audience),migrated);
  }
  console.log('PASS Legacy display settings migrate safely and explicit visibility settings persist per audience');
+ const Q=await load('presentation-notionals'),Pr=await load('presentation-probability');
+ for(const venue of ['OTC','CME']){
+  const source=legs.map(l=>({...l,venue,expiry:venue==='CME'?'2027-12-03':l.expiry}));
+  const sized=T.presentationProtectionTarget(c,source,m,{},venue),linked=Q.linkPresentationCollar(sized.legs,venue);near(linked[0].notional,linked[1].notional);
+  for(const id of source.map(l=>l.id))for(const amount of [0,1000123,2000000]){
+   const changed=Q.editPresentationNotional(linked,id,amount,venue),r=S.strategy(c,changed,m);
+   const h=venue==='CME'?Math.ceil(amount/125000)*125000:amount;
+   near(changed[0].notional,h);near(changed[1].notional,h);near(r.rawCoverage,h/r.n);
+   for(const l of r.legs)near(Math.abs(l.premium),l.h*l.quote.price);
+   near(L.cashflowLedger(r,1.4).at(-1).usdBalance,r.endEquity(1.4));
+  }
+  const unlocked=Q.editPresentationNotional(linked,linked[0].id,2000000,venue,false);near(unlocked[1].notional,linked[1].notional);
+ }
+ const multi=[{...legs[0],notional:375000},{...legs[1],id:'p1',notional:100000},{...legs[1],id:'p2',notional:200000}];
+ const linked=Q.linkPresentationCollar(multi,'CME');near(linked[1].notional+linked[2].notional,375000);for(const l of linked)near(l.notional%125000,0);
+ for(const bad of [-1,NaN,Infinity])assert.throws(()=>Q.editPresentationNotional(legs,legs[0].id,bad,'OTC'));
+ console.log('PASS Editable CHF amounts link both directions, preserve whole CME lots, and reconcile costs, coverage and cashflows');
+ const counts=Pr.historicalDirectCounts([1,1.2,1.2,1.4],1.2);assert.equal(counts.atMost,3);assert.equal(counts.atMost+counts.above,counts.total);
+ const combined=Pr.inclusivePresentationOutcome({better:.3,equal:.2,worse:.4,unresolved:.1});near(combined.better,.5);near(combined.better+combined.worse+combined.unresolved,1);near(combined.equal,0);
+ for(const audience of ['client','admin']){
+  const cfg=D.defaultDisplayConfig(audience);assert.equal(cfg.version,6);assert.equal(cfg.controls.excel,false);assert.equal(cfg.sections.probabilities,false);
+  const migrated=D.validateDisplayConfig({...cfg,version:5,sections:{...cfg.sections,probabilities:true},controls:{...cfg.controls,excel:true}},audience);assert.equal(migrated.controls.excel,false);assert.equal(migrated.sections.probabilities,false);migrated.controls.excel=true;migrated.sections.probabilities=true;assert.equal(D.validateDisplayConfig(migrated,audience).controls.excel,true);assert.equal(D.validateDisplayConfig(migrated,audience).sections.probabilities,true);
+ }
+ console.log('PASS Equality merges once without losing unresolved mass; Excel defaults migrate once and admin re-enable persists');
+
 }finally{fs.rmSync(dir,{recursive:true,force:true});}

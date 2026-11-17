@@ -11,8 +11,8 @@ export type PublishedScenario={c:Config;legs:Leg[];market:Market;overrides:Overr
 export const displayModels=['physical','neutral','historical','bootstrap','fhs'] as const;
 export type DisplayModel=typeof displayModels[number];
 export type DisplayControls={otc:boolean;cme:boolean;referenceIV:boolean;excel:boolean;policyGuide:boolean;policyStress:boolean;internalFunding:boolean;boundaryDetails:boolean;walkthrough:boolean};
-export type DisplayConfig={version:5;audience:Role;controls:DisplayControls;pages:{client:boolean;workbench:boolean};sections:{context:boolean;funding:boolean;chart:boolean;strikes:boolean;iv:boolean;probabilities:boolean;scenarios:boolean;bounds:boolean;costs:boolean;greeks:boolean};allowedModels:DisplayModel[];defaultModels:DisplayModel[];title:string;scenario:PublishedScenario|null;updatedAt:string;usingDefaultScenario?:boolean};
-export function defaultDisplayConfig(audience:Role='client'):DisplayConfig{const models:DisplayModel[]=audience==='admin'?[...displayModels]:['historical'];return{version:5,audience,controls:{otc:true,cme:audience==='admin',referenceIV:audience==='admin',excel:true,policyGuide:audience==='admin',policyStress:audience==='admin',internalFunding:false,boundaryDetails:false,walkthrough:false},pages:{client:true,workbench:audience==='admin'},sections:{context:true,funding:true,chart:true,strikes:true,iv:true,probabilities:true,scenarios:true,bounds:true,costs:false,greeks:false},allowedModels:models,defaultModels:[...models],title:'瑞郎领口对冲 · 客户演示',scenario:null,updatedAt:''};}
+export type DisplayConfig={version:6;audience:Role;controls:DisplayControls;pages:{client:boolean;workbench:boolean};sections:{context:boolean;funding:boolean;chart:boolean;strikes:boolean;iv:boolean;probabilities:boolean;scenarios:boolean;bounds:boolean;costs:boolean;greeks:boolean};allowedModels:DisplayModel[];defaultModels:DisplayModel[];title:string;scenario:PublishedScenario|null;updatedAt:string;usingDefaultScenario?:boolean};
+export function defaultDisplayConfig(audience:Role='client'):DisplayConfig{const models:DisplayModel[]=audience==='admin'?[...displayModels]:['historical'];return{version:6,audience,controls:{otc:true,cme:audience==='admin',referenceIV:audience==='admin',excel:false,policyGuide:audience==='admin',policyStress:audience==='admin',internalFunding:false,boundaryDetails:false,walkthrough:false},pages:{client:true,workbench:audience==='admin'},sections:{context:true,funding:true,chart:true,strikes:true,iv:true,probabilities:false,scenarios:true,bounds:true,costs:false,greeks:false},allowedModels:models,defaultModels:[...models],title:'瑞郎领口对冲 · 客户演示',scenario:null,updatedAt:''};}
 const object=(x:unknown):Record<string,unknown>=>{if(!x||typeof x!=='object'||Array.isArray(x))throw Error('配置须为对象');return x as Record<string,unknown>;};
 const string=(x:unknown,max=300)=>{if(typeof x!=='string'||x.length>max)throw Error('文字长度或格式无效');return x;};
 const number=(x:unknown,min=-1e15,max=1e15)=>{if(typeof x!=='number'||!Number.isFinite(x)||x<min||x>max)throw Error('数值无效');return x;};
@@ -46,7 +46,7 @@ function published(raw:unknown):PublishedScenario{
  return{c,legs,market,overrides:validateOverrides(s.overrides),probability,history,...(s.spotOrigin===undefined?{}:{spotOrigin:validatePresentationSpotOrigin(s.spotOrigin,c.spot)})};
 }
 export function validateDisplayConfig(raw:unknown,audience?:Role):DisplayConfig{
- const v=object(raw);if(v.version!==1&&v.version!==2&&v.version!==3&&v.version!==4&&v.version!==5)throw Error('展示配置版本无效');
+ const v=object(raw);if(v.version!==1&&v.version!==2&&v.version!==3&&v.version!==4&&v.version!==5&&v.version!==6)throw Error('展示配置版本无效');
  const legacy=v.version===1,target=audience??(legacy?'client':v.audience);
  if(target!=='admin'&&target!=='client')throw Error('展示对象无效');
  if(!legacy&&v.audience!==target)throw Error('展示对象与保存目标不一致');
@@ -62,16 +62,17 @@ export function validateDisplayConfig(raw:unknown,audience?:Role):DisplayConfig{
  // choices are explicit and are never reset by the probability migration.
  const oldControls=v.version===3?flags(v.controls,{otc:true,cme:true,referenceIV:target==='admin',excel:true}):null;
  if(oldControls&&!oldControls.otc&&!oldControls.cme)throw Error('至少开启 OTC 或 CME 一种交易方式');
- const controls=v.version===4||v.version===5?flags({internalFunding:false,boundaryDetails:false,walkthrough:false,...object(v.controls)},d.controls):oldControls?{...d.controls,...oldControls,...(target==='client'?{otc:true,cme:false}:{})}:d.controls;
+ const controls=v.version===4||v.version===5||v.version===6?flags({internalFunding:false,boundaryDetails:false,walkthrough:false,...object(v.controls)},d.controls):oldControls?{...d.controls,...oldControls,...(target==='client'?{otc:true,cme:false}:{})}:d.controls;
+ if(v.version!==6){controls.excel=false;sections.probabilities=false;}
  if(!controls.otc&&!controls.cme)throw Error('至少开启 OTC 或 CME 一种交易方式');
  let visibleModels=legacy?d.allowedModels:[...new Set(allowedModels)],selectedModels=legacy?d.defaultModels:[...new Set(v.defaultModels as DisplayModel[])];
  // Existing customer displays switch from resampling to direct historical
  // counting once. Preserve all unrelated choices and the published scenario.
  // V5 is explicit: an administrator may re-enable bootstrap or hide historical.
- if(!legacy&&target==='client'&&v.version!==5){
+ if(!legacy&&target==='client'&&Number(v.version)<5){
   visibleModels=[...new Set<DisplayModel>([...visibleModels.filter(x=>x!=='bootstrap'),'historical'])];
   selectedModels=[...new Set(selectedModels.map(x=>x==='bootstrap'?'historical':x))];
  }
- const out:DisplayConfig={version:5,audience:target,controls,pages:legacy?d.pages:pages,sections,allowedModels:visibleModels,defaultModels:selectedModels,title,scenario:v.scenario===null?null:published(v.scenario),updatedAt:string(v.updatedAt??'',40)};
+ const out:DisplayConfig={version:6,audience:target,controls,pages:legacy?d.pages:pages,sections,allowedModels:visibleModels,defaultModels:selectedModels,title,scenario:v.scenario===null?null:published(v.scenario),updatedAt:string(v.updatedAt??'',40)};
  if(!out.pages.client&&!out.pages.workbench)throw Error('客户至少需要一个可见页面');return out;
 }

@@ -23,6 +23,7 @@ import {resolvePresentationCmeIVs,type PresentationCmeIVMode} from '@/lib/presen
 import PresentationLegEditor,{type LegEdit} from './presentation-leg-editor';
 import {priceToPresentationIV} from '@/lib/presentation-leg-pricing';
 import {presentationProtectionTarget} from '@/lib/presentation-tail-sizing';
+import {actualPresentationNotional,editPresentationNotional,linkPresentationCollar} from '@/lib/presentation-notionals';
 
 type PublishedScenario=NonNullable<DisplayConfig['scenario']>;
 type Props={config:DisplayConfig;variant:'presentation'|'workbench';adminPreview?:boolean;todayDefaults?:boolean};
@@ -62,6 +63,8 @@ function PublishedClient({config,snapshot,variant,adminPreview,todayDefaults}:{c
  const initialLow=sameStrike(lowLegs,base.low),initialHigh=sameStrike(highLegs,base.high);
  const [low,setLow]=useState(initialLow),[high,setHigh]=useState(initialHigh),[lowEdited,setLowEdited]=useState(false),[highEdited,setHighEdited]=useState(false);
  const [legEdits,setLegEdits]=useState<Record<string,LegEdit>>({});
+ const [quantityEdits,setQuantityEdits]=useState<Record<'OTC'|'CME',Record<string,number>|null>>({OTC:null,CME:null});
+ const [linkNotionals,setLinkNotionals]=useState(true);
  const [targetInput,setTargetInput]=useState('100'),[protectionTarget,setProtectionTarget]=useState(1);
  const venueEdits=useMemo(()=>Object.fromEntries(Object.entries(legEdits).filter(([k])=>k.startsWith(venue+':')).map(([k,v])=>[k.slice(4),v])),[legEdits,venue]);
  const editLeg=(id:string,patch:LegEdit)=>setLegEdits(v=>({...v,[venue+':'+id]:{...v[venue+':'+id],...patch}}));
@@ -150,7 +153,9 @@ function PublishedClient({config,snapshot,variant,adminPreview,todayDefaults}:{c
     const inputs=v==='CME'?resolvePresentationCmeIVs(built.legs,cmeIVMode,{...cmeManualIVs,...Object.fromEntries(built.legs.filter(l=>legEdits['CME:'+l.id]?.price!==undefined).map(l=>[l.id,.1]))},matchingCmeQuotes,iv):[];
     const inputMap=new Map(inputs.map(x=>[x.id,x]));
     let usedLegs=v==='CME'?built.legs.map(l=>({...l,modelIV:inputMap.get(l.id)?.iv})):built.legs;
-    const sized=presentationProtectionTarget(built.c,usedLegs,built.market,snapshot.overrides,v,protectionTarget);usedLegs=sized.legs;
+    const manual=quantityEdits[v];
+    const sized=manual?{legs:usedLegs.map(l=>({...l,notional:actualPresentationNotional(manual[l.id]??l.notional,v)})),notice:'按手动名义金额计算，保护比例随金额变化。'}:presentationProtectionTarget(built.c,usedLegs,built.market,snapshot.overrides,v,protectionTarget);
+    usedLegs=linkNotionals?linkPresentationCollar(sized.legs,v):sized.legs;
     usedLegs=usedLegs.map(l=>{const price=legEdits[v+':'+l.id]?.price;return price===undefined||!l.enabled||l.notional===0?l:{...l,modelIV:priceToPresentationIV(built.c,l,built.market,snapshot.overrides,price)};});
     const priced=strategy(built.c,usedLegs,built.market,snapshot.overrides);
     for(const l of priced.legs)if(legEdits[v+':'+l.id]?.price!==undefined)l.ivSource='手动期权单价反推 IV · 本页 F 与期限';
@@ -161,24 +166,33 @@ function PublishedClient({config,snapshot,variant,adminPreview,todayDefaults}:{c
    }catch(error){out[v]={r:null,error:error instanceof Error?error.message:'当前参数无法计算',warnings:[]};}
   }
   return out;
- },[c,legs,currentMarket,snapshot.overrides,low,high,lowEdited,highEdited,iv,cmePolicy,venueKey,cmeDesign,cmeIVMode,cmeManualIVs,cmeQuotes,cmeKey,legEdits,protectionTarget]);
+ },[c,legs,currentMarket,snapshot.overrides,low,high,lowEdited,highEdited,iv,cmePolicy,venueKey,cmeDesign,cmeIVMode,cmeManualIVs,cmeQuotes,cmeKey,legEdits,protectionTarget,quantityEdits,linkNotionals]);
  const calculated=results[venue],r=calculated.r,greekR=useMemo(()=>r?{...r,c:{...r.c,scenario:spot}}:null,[r,spot]);
  const currentReturns=useMemo(()=>r?presentationReturns(r,r.pnl(spot)):null,[r,spot]);
  const returnBasis=useMemo(()=>r?presentationReturnBasis(r):null,[r]);
- const applyTailSizing=()=>{const value=Number(targetInput)/100;if(!targetInput.trim()||!Number.isFinite(value)||value<0||value>5){setTailSizingError('保护比例须为 0%–500%。');return;}setProtectionTarget(value);setTailSizingError('');};
+ const applyTailSizing=()=>{const value=Number(targetInput)/100;if(!targetInput.trim()||!Number.isFinite(value)||value<0||value>5){setTailSizingError('保护比例须为 0%–500%。');return;}setProtectionTarget(value);setQuantityEdits(v=>({...v,[venue]:null}));setTailSizingError('');};
+ const editNotional=(id:string,value:number)=>{
+  const existing=(calculated.sizing?.legs??(venue==='CME'?cmeDesign.built?.legs:legs)??legs).map(l=>({...l,notional:quantityEdits[venue]?.[l.id]??l.notional}));
+  try{const next=editPresentationNotional(existing,id,value,venue,linkNotionals);setQuantityEdits(v=>({...v,[venue]:Object.fromEntries(next.map(l=>[l.id,l.notional]))}));setTailSizingError('');}
+  catch{setQuantityEdits(v=>({...v,[venue]:{...Object.fromEntries(existing.map(l=>[l.id,l.notional])),...v[venue],[id]:value}}));}
+ };
+ const toggleNotionalLink=(enabled:boolean)=>{
+  setLinkNotionals(enabled);
+  setQuantityEdits(previous=>Object.fromEntries((['OTC','CME'] as const).map(v=>{const manual=previous[v],source=results[v].sizing?.legs;if(!source)return[v,manual];return[v,Object.fromEntries((enabled?linkPresentationCollar(source,v):source).map(l=>[l.id,l.notional]))];})) as typeof previous);
+ };
  const displayMarket=calculated.market??currentMarket;
  const reset=()=>{
   ++inputRevision.current;stressEdited.current=false;cancelSpot();const input:PresentationFundingInput={equity:base.equity,start:liveDefaults?hongKongToday():base.start,durationDays:days(base.start,base.end),sizing:'proportional'};
   setExportModels(config.defaultModels);setLow(initialLow);setHigh(initialHigh);setLowEdited(false);setHighEdited(false);setIv(base.iv);setIvMode('per-leg');setLegIVs(initialLegIVs());setCmeIVMode('market');setCmeManualIVs({});setCmeQuotes(null);setCmeRefresh(x=>x+1);setPremiumFunding(base.mode==='loan'?(config.controls.internalFunding?(base.premiumFunding??'external'):'external'):'internal');setChosenVenue(initialVenue);setCmePolicy(base.cmeExpiry?.mode==='before-roll'?'before-roll':'after-close');setFunding(input);setSpotInput(String(base.spot));setSpotQuote(snapshot.spotOrigin??null);setSpotMode(liveDefaults?'latest':'published');setSpotError('');setSpotLoading(liveDefaults);
   try{const result=liveDefaults?buildPresentationSession(snapshot,input,base.spot,snapshot.spotOrigin):null;setRebuilt(result?keepPublishedOrigin(result,snapshot):null);setFundingError('');}catch(error){setRebuilt(null);setFundingError(error instanceof Error?error.message:'默认日期试算未完成');}
-  setLegEdits({});setProtectionTarget(1);setTargetInput('100');
+  setLegEdits({});setQuantityEdits({OTC:null,CME:null});setLinkNotionals(true);setProtectionTarget(1);setTargetInput('100');
   setCases([{id:'down',name:'瑞郎贬值 10%',changePct:-10},{id:'flat',name:'瑞郎汇率不变',changePct:0},{id:'up',name:'瑞郎升值 10%',changePct:10}]);setSelectedCase('flat');setCaseError('');setNotionalOverrides({});setTailSizingError('');setStressSpot(base.spot*1.2);setResetKey(x=>x+1);if(liveDefaults)void fetchLatest(input);
  };
  const rebuild=()=>{try{
   if(spotLoading)throw Error('请等待汇率读取，或直接输入手动起点');if(!spotInput.trim())throw Error('请输入起点汇率');
   if(spotMode==='latest'&&(!spotQuote||spotError))throw Error('最新参考未取得；请重试，或手动输入起点');
   const value=Number(spotInput),origin=spotMode==='published'?snapshot.spotOrigin:spotMode==='latest'?spotQuote!:undefined;
-  const result=buildPresentationSession(snapshot,funding,value,origin);setRebuilt(spotMode==='published'?keepPublishedOrigin(result,snapshot):result);setNotionalOverrides({});setTailSizingError('');if((result.dateChanged||value!==base.spot)&&ivMode==='reference')setIvMode('per-leg');setFundingError('');if(!stressEdited.current)setStressSpot(value*1.2);setResetKey(x=>x+1);
+  const result=buildPresentationSession(snapshot,funding,value,origin);if(funding.sizing==='proportional'){const nextN=strategy(result.c,result.legs,result.market,snapshot.overrides).n;setQuantityEdits(previous=>Object.fromEntries((['OTC','CME'] as const).map(v=>[v,previous[v]?Object.fromEntries(Object.entries(previous[v]!).map(([id,h])=>[id,actualPresentationNotional(h*nextN/(results[v].r?.n??nextN),v)])):null])) as typeof previous);}setRebuilt(spotMode==='published'?keepPublishedOrigin(result,snapshot):result);setNotionalOverrides({});setTailSizingError('');if((result.dateChanged||value!==base.spot)&&ivMode==='reference')setIvMode('per-leg');setFundingError('');if(!stressEdited.current)setStressSpot(value*1.2);setResetKey(x=>x+1);
  }catch(error){setFundingError(error instanceof Error?error.message:'无法重建试算');}};
  const addCase=()=>{try{const changePct=Number(newChange);if(!newChange.trim())throw Error('请输入瑞郎到期变化。');spotFromCHFChange(current.spot,changePct);if(cases.length>=12)throw Error('最多保留 12 个情景，请先删除一个。');const id=`scenario-${Date.now()}-${cases.length}`;setCases(v=>[...v,{id,name:newName.trim()||`瑞郎变化 ${number(changePct,2)}%`,changePct}]);setSelectedCase(id);setCaseError('');}catch(e){setCaseError(e instanceof Error?e.message:'情景无效');}};
  const editChange=(id:string,value:string)=>{try{if(!value.trim())throw Error('请输入有效涨跌幅。');const changePct=Number(value);spotFromCHFChange(current.spot,changePct);setCases(v=>v.map(x=>x.id===id?{...x,changePct}:x));setCaseError('');}catch(e){setCaseError(e instanceof Error?e.message:'情景无效');}};
@@ -213,16 +227,17 @@ function PublishedClient({config,snapshot,variant,adminPreview,todayDefaults}:{c
   </section>}
   {(section.strikes||section.iv)&&<section className="panel presentation-controls">
    <div className="panel-heading"><h2>逐腿期权设置 <InfoHint title="逐腿定价">每条腿独立设置行权价、到期日与定价输入；IV 和单价只输入一项，另一项自动计算。OTC 默认 Call 8%、Put 8.5% 为示例；CME 默认匹配市场 IV，手动输入优先。修改均为本次新方案试算。</InfoHint></h2></div>
-   <PresentationLegEditor legs={(venue==='CME'?cmeDesign.built?.legs??legs.map(l=>({...l,venue:'CME' as const,expiry:''})):legs.map(l=>({...l,strike:venueEdits[l.id]?.strike??l.strike,venue:'OTC' as const,expiry:venueEdits[l.id]?.expiry??(l.venue==='OTC'?l.expiry:c.end)})))} result={r} edits={venueEdits} onEdit={editLeg} showTerms={section.strikes} showPricing={section.iv}
+   <label className="mini"><input type="checkbox" aria-label="买 Call 与卖 Put 数量联动" checked={linkNotionals} onChange={e=>toggleNotionalLink(e.target.checked)}/> 买 Call / 卖 Put 数量 1:1 联动</label>
+   <PresentationLegEditor onNotional={editNotional} notionals={quantityEdits[venue]??{}} legs={(venue==='CME'?cmeDesign.built?.legs??legs.map(l=>({...l,venue:'CME' as const,expiry:''})):legs.map(l=>({...l,strike:venueEdits[l.id]?.strike??l.strike,venue:'OTC' as const,expiry:venueEdits[l.id]?.expiry??(l.venue==='OTC'?l.expiry:c.end)})))} result={r} edits={venueEdits} onEdit={editLeg} showTerms={section.strikes} showPricing={section.iv}
     ivFor={l=>venue==='OTC'?(legIVs[l.id]??l.modelIV??iv):(cmeManualIVs[l.id]??matchingCmeQuotes.find(q=>q.id===l.id&&q.available)?.iv??null)}
     onIV={(id,value)=>{if(venue==='CME')setCmeManualIVs(v=>({...v,[id]:value}));else {setIvMode('per-leg');setLegIVs(v=>({...v,[id]:value}));}}}
     onMarket={venue==='CME'?id=>{editLeg(id,{price:undefined});setCmeManualIVs(v=>{const next={...v};delete next[id];return next;});setCmeIVMode('market');}:undefined}/>
    {section.iv&&venue==='CME'&&<div className="presentation-info-row"><button type="button" className="text-button" onClick={()=>{setCmeQuotes(null);setCmeRefresh(x=>x+1);}} disabled={cmeLoading}>{cmeLoading?'正在读取 CME 市场参考…':'刷新 CME 市场 IV'}</button>{cmeQuoteError&&<span className="warning">{cmeQuoteError}；可逐腿输入。</span>}</div>}
   </section>}
   {!lowEdited&&!highEdited&&lowLegs.length>0&&highLegs.length>0&&initialLow>=initialHigh&&<div className="warning">非标准领口 · 请核对行权价。<InfoHint title="非标准领口">已发布方案的 Put 行权价不低于 Call 行权价。此页保留原腿计算；调整为下行权价低于上行权价后可比较标准领口。</InfoHint></div>}
-   {section.bounds&&<section className="panel presentation-tail-sizing"><div className="panel-heading"><h2>尾部保护比例 <InfoHint title="实际名义与尾部模型">OTC 按净实际名义 CHF ÷ 到期 CHF 本息计算，默认 100%。CME 按每张 125,000 CHF 向上取整，同时满足名义与模型尾部目标。仅调整买入保护腿；卖方腿、远期与其他条件保持。跨期限、基差或远期可能使实际名义比例与模型尾部比例不同；100% 不代表全区间保本。</InfoHint></h2><strong>{r?percent(r.rawCoverage):'待计算'} · 实际名义 CHF</strong></div>
-    <div className="presentation-tail-sizing-actions"><label className="field"><span>目标保护比例 %</span><input aria-label="目标尾部保护比例百分比" type="number" min="0" max="500" step="1" value={targetInput} onChange={e=>setTargetInput(e.target.value)}/></label><button type="button" className="ghost" onClick={applyTailSizing}>按目标计算保护数量</button><span className="mini">已应用 {percent(protectionTarget)}{venue==='CME'?' · 整手至少覆盖目标':''}</span></div>
-    <p className="mini">模型尾部覆盖 {r&&Number.isFinite(r.coverage)?percent(r.coverage):'不可认证'} · 权利金、费用及收益同步重算 <InfoHint title="数量计算说明">默认按目标 100% 生成本页新方案，后续参数调整继续维持已应用目标。CME 为当前保护腿比例下整手补足，不宣称所有组合的最低价格；不包含平掉既有实盘仓位的费用。没有买入保护腿时不会自动新增交易。</InfoHint></p>{tailSizingError&&<p className="warning" role="alert">{tailSizingError}</p>}
+   {section.bounds&&<section className="panel presentation-tail-sizing"><div className="panel-heading"><h2>尾部保护比例 <InfoHint title="实际名义与尾部模型">OTC 按净实际名义 CHF ÷ 到期 CHF 本息计算，默认 100%。CME 按每张 125,000 CHF 向上取整，同时满足名义与模型尾部目标。默认联动买 Call 与卖 Put 的合计名义金额；关闭联动后仅调整买入保护腿。远期与其他条件保持。跨期限、基差或远期可能使实际名义比例与模型尾部比例不同；100% 不代表全区间保本。</InfoHint></h2><strong>{r?percent(r.rawCoverage):'待计算'}</strong></div>
+    <div className="presentation-tail-sizing-actions"><label className="field"><span>目标保护比例 %</span><input aria-label="目标尾部保护比例百分比" type="number" min="0" max="500" step="1" value={targetInput} onChange={e=>setTargetInput(e.target.value)}/></label><button type="button" className="ghost" onClick={applyTailSizing}>按目标计算保护数量</button><span className="mini">{quantityEdits[venue]?'按逐腿金额计算':<>已应用 {percent(protectionTarget)}{venue==='CME'?' · 整手至少覆盖目标':''}</>}</span></div>
+    <p className="mini">模型尾部覆盖 {r&&Number.isFinite(r.coverage)?percent(r.coverage):'不可认证'} · 权利金、费用及收益同步重算 <InfoHint title="数量计算说明">默认按目标 100% 生成本页新方案，手动修改名义金额后按实际金额计算；再次点击按目标计算才恢复目标模式。联动开启时同步调整卖出 Put，卖方义务亦会变化。CME 为当前保护腿比例下整手补足，不宣称所有组合的最低价格；不包含平掉既有实盘仓位的费用。没有买入保护腿时不会自动新增交易。</InfoHint></p>{tailSizingError&&<p className="warning" role="alert">{tailSizingError}</p>}
    </section>}
 
   {calculated.error&&<div className="error" role="alert">{calculated.error} 请调整输入后继续查看结果。</div>}
